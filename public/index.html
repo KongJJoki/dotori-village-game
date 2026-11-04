@@ -13,7 +13,7 @@ button.primary{background:#75a386;border-color:#568363}button.danger{background:
 h1{letter-spacing:-1px;text-shadow:1px 2px #fff}.where{border:2px solid #bda681}.modal{border-color:#ac9576}
 
 .lobbylist{display:grid;gap:7px;margin:12px 0}.lobbylist>div{background:#f2e8d3;padding:11px;border-radius:10px;display:flex;justify-content:space-between}.selectrow{display:flex;gap:6px;justify-content:center;margin:12px 0}.selectrow button.active{outline:3px solid #6b9877;background:#d4e9ce}.code{font-size:30px;font-weight:900;letter-spacing:6px;text-align:center;color:#4b7058}.onlineStatus{font-size:12px;color:#64836a}.meetingchat{height:180px}.where{pointer-events:none}
- .selectrow{flex-wrap:wrap;justify-content:flex-start;gap:8px}.selectrow button{font-size:14px;min-width:115px;background:#fffaf0;transition:transform .12s,background .12s}.selectrow button:hover{transform:translateY(-2px)}.quickArea{margin:10px 0;padding:12px;border:2px dashed #b7a684;border-radius:11px;background:#f3ecd5}.quickArea b{margin-left:10px;color:#52765c}.modal{background:linear-gradient(155deg,#fff9ed,#f6ebd6)}.gamepane{background:linear-gradient(180deg,#fff8e7,#f4e8d4)}.head h1{font-weight:900}.panel h2{border-bottom:2px dashed #e6d7b9;padding-bottom:7px}.person{transition:background .2s}.person:hover{background:#fbeed4}</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 온라인 멀티플레이 v1.3 · 3~12명</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
+ .selectrow{flex-wrap:wrap;justify-content:flex-start;gap:8px}.selectrow button{font-size:14px;min-width:115px;background:#fffaf0;transition:transform .12s,background .12s}.selectrow button:hover{transform:translateY(-2px)}.quickArea{margin:10px 0;padding:12px;border:2px dashed #b7a684;border-radius:11px;background:#f3ecd5}.quickArea b{margin-left:10px;color:#52765c}.modal{background:linear-gradient(155deg,#fff9ed,#f6ebd6)}.gamepane{background:linear-gradient(180deg,#fff8e7,#f4e8d4)}.head h1{font-weight:900}.panel h2{border-bottom:2px dashed #e6d7b9;padding-bottom:7px}.person{transition:background .2s}.person:hover{background:#fbeed4}.selectrow button{display:flex;align-items:center;flex-direction:column;gap:3px;justify-content:center;min-width:106px}.avatar-thumb{width:54px;height:54px;display:inline-block;background-image:url('/sprites.png?v=14');background-size:432px 54px;background-repeat:no-repeat;image-rendering:pixelated}.person{gap:8px}</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 온라인 멀티플레이 v1.4 · 3~12명</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
 (()=>{'use strict';
 const socket=io();let roomCode='',selfId='',host='',lobbyData=null,mode='menu',keys={},players=[],me=null,bodies=[],taskItems=[],progress=0,total=12,notice=0,meetingEnds=0,voteStarts=0,quickCount=0,quickTotal=0,quickPressed=false,miniState=null,taskDone=[],killCD=12,roster=[];
 const C=document.getElementById('game'),g=C.getContext('2d');g.imageSmoothingEnabled=false;
@@ -99,131 +99,56 @@ function indoor(room){const b=building(room);R(0,0,410,300,'#705948');R(16,18,37
 }
 
 const ANIMALS=[
- {name:'치이카와',emoji:'🤍',kind:'chiikawa',base:'#fffef6',dark:'#c9bfb4',light:'#ffffff',inner:'#f8b8c9',shirt:'#fff7ed'},
- {name:'하치와레',emoji:'💙',kind:'hachiware',base:'#fffefa',dark:'#9db2be',light:'#ffffff',inner:'#f2b3bd',shirt:'#eaf6fa'},
- {name:'우사기',emoji:'💛',kind:'usagi',base:'#fbe191',dark:'#d8b975',light:'#fff2b7',inner:'#e99b9d',shirt:'#fce3a3'},
- {name:'모몽가',emoji:'🩵',kind:'momonga',base:'#f9f7eb',dark:'#b4bbce',light:'#ffffff',inner:'#9db5dd',shirt:'#f0f4ff'},
- {name:'카니',emoji:'🦀',kind:'kani',base:'#f5e0ba',dark:'#b48f82',light:'#fff1d7',inner:'#e7a2a5',shirt:'#e8b3a1'},
- {name:'쿠리만쥬',emoji:'🌰',kind:'kurimanju',base:'#caa17a',dark:'#785c50',light:'#f1dfc2',inner:'#e9a19a',shirt:'#af8e68'},
- {name:'시사',emoji:'🌺',kind:'shisa',base:'#e9cf98',dark:'#a98562',light:'#fbe6b5',inner:'#f0b3a4',shirt:'#c6d8b2'},
- {name:'라코',emoji:'⚔️',kind:'rakko',base:'#cfb6a2',dark:'#806f65',light:'#f6e6d6',inner:'#e9b0a5',shirt:'#bcd2c8'}
+ {name:'치이카와',emoji:'🤍'},
+ {name:'하치와레',emoji:'💙'},
+ {name:'우사기',emoji:'💛'},
+ {name:'모몽가',emoji:'🩵'},
+ {name:'카니',emoji:'🩷'},
+ {name:'쿠리만쥬',emoji:'🌰'},
+ {name:'시사',emoji:'🧡'},
+ {name:'리본 하치와레',emoji:'🎀'}
 ];
-const walkMemory=new Map();
+const spriteSheet=new Image();
+spriteSheet.src='/sprites.png?v=14';
+const walking=new Map();
 function sprite(p){
- const a=ANIMALS[p.icon]||ANIMALS[0],id=p.id;
+ const index=Math.max(0,Math.min(7,Number(p.icon)||0));
  const x=Math.round(p.x),y=Math.round(p.y),now=performance.now();
- let motion=walkMemory.get(id);
- if(!motion||motion.room!==p.room){motion={x:p.x,y:p.y,room:p.room,time:now,activity:0,phase:0,face:1}}
- const delta=Math.hypot(p.x-motion.x,p.y-motion.y),dt=Math.min(.05,Math.max(.008,(now-motion.time)/1000));
- if(delta>.15&&delta<65){motion.lastMoving=now;motion.face=p.x-motion.x<-.3?-1:p.x-motion.x>.3?1:motion.face}
- const moving=now-(motion.lastMoving||0)<145;
- if(moving){motion.activity=Math.min(1,motion.activity+dt*7);motion.phase+=dt*15}
- else motion.activity=Math.max(0,motion.activity-dt*6);
- motion.x=p.x;motion.y=p.y;motion.room=p.room;motion.time=now;walkMemory.set(id,motion);
- const swing=Math.sin(motion.phase)*motion.activity,hop=Math.abs(Math.sin(motion.phase))*(motion.activity*2.2),step=Math.round(swing*5);
- const yy=Math.round(y-hop);
- g.save();if(p.ghost)g.globalAlpha=.48;
- if(a.kind==='hachiware'){
-   // Reference-focused Hachiware: round white body, large white face, blue V-split head and blue cat-shaped ears.
-   const blue='#79a9c6',outline='#514c49',white='#fffdf8',pink='#f6adb9',ink='#302d2c';
-   const foot=Math.round(step*.7);
-   const ellipse=(cx,cy,rx,ry,color)=>{g.fillStyle=color;g.beginPath();g.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);g.fill()};
-   R(x-20,y+20,40,4,'#405e5144');
-   // Little feet alternate in the walk cycle, with a rounded, unclothed white body.
-   ellipse(x-9,yy+17+Math.max(0,foot),6,5,outline);
-   ellipse(x+9,yy+17+Math.max(0,-foot),6,5,outline);
-   ellipse(x-9,yy+16+Math.max(0,foot),4,4,white);
-   ellipse(x+9,yy+16+Math.max(0,-foot),4,4,white);
-   ellipse(x,yy+1,17,20,outline);
-   ellipse(x,yy,15,18,white);
-   ellipse(x-17,yy+3-foot/3,5,8,outline);
-   ellipse(x+17,yy+3+foot/3,5,8,outline);
-   ellipse(x-17,yy+2-foot/3,3.5,6,white);
-   ellipse(x+17,yy+2+foot/3,3.5,6,white);
-   // The pair of pointed blue ears grows directly from the blue top marking.
-   g.fillStyle=outline;g.beginPath();
-   g.moveTo(x-19,yy-25);g.lineTo(x-17,yy-50);g.lineTo(x-8,yy-44);
-   g.lineTo(x,yy-39);g.lineTo(x+9,yy-45);g.lineTo(x+17,yy-51);
-   g.lineTo(x+20,yy-25);g.closePath();g.fill();
-   g.fillStyle=blue;g.beginPath();
-   g.moveTo(x-16,yy-26);g.lineTo(x-15,yy-46);g.lineTo(x-8,yy-41);
-   g.lineTo(x,yy-36);g.lineTo(x+9,yy-42);g.lineTo(x+15,yy-47);
-   g.lineTo(x+17,yy-26);g.closePath();g.fill();
-   // Wider head than body; this makes the silhouette unmistakably chubby.
-   ellipse(x,yy-20,23,20,outline);
-   ellipse(x,yy-20,21,18,white);
-   // Blue hair-like markings: two patches, opening into a white V at the forehead.
-   g.fillStyle=blue;g.beginPath();
-   g.moveTo(x-20,yy-29);g.lineTo(x-19,yy-39);g.lineTo(x-10,yy-43);
-   g.lineTo(x-1,yy-36);g.lineTo(x-1,yy-31);g.lineTo(x-8,yy-26);
-   g.lineTo(x-17,yy-26);g.closePath();g.fill();
-   g.beginPath();g.moveTo(x+20,yy-29);g.lineTo(x+19,yy-39);
-   g.lineTo(x+10,yy-43);g.lineTo(x+1,yy-36);g.lineTo(x+1,yy-31);
-   g.lineTo(x+8,yy-26);g.lineTo(x+17,yy-26);g.closePath();g.fill();
-   // Small eyes, glossy highlights, whisker-like smile, pink blushing cheeks.
-   ellipse(x-8,yy-20,3.2,4.1,ink);ellipse(x+8,yy-20,3.2,4.1,ink);
-   R(x-9,yy-23,2,2,white);R(x+7,yy-23,2,2,white);
-   ellipse(x-15,yy-12,5,3.6,pink);ellipse(x+15,yy-12,5,3.6,pink);
-   R(x-17,yy-13,1,3,'#cb7f8f');R(x-14,yy-14,1,3,'#cb7f8f');
-   R(x+13,yy-14,1,3,'#cb7f8f');R(x+16,yy-13,1,3,'#cb7f8f');
-   R(x-11,yy-31,2,1,ink);R(x+9,yy-31,2,1,ink);
-   R(x-1,yy-13,2,2,ink);R(x-4,yy-10,3,2,ink);R(x+2,yy-10,3,2,ink);
-   R(x-2,yy-9,4,2,ink);
-   if(p.id===selfId){R(x-22,y+25,44,3,'#fff3bc');R(x-22,y+22,4,6,'#fff3bc');R(x+18,y+22,4,6,'#fff3bc')}
-   g.restore();text(p.name,x,yy-56,'#574d40',12);return;
- }
- // soft contact shadow and lively alternating footsteps
- R(x-16,y+17,32,5,'#5a76544a');
- R(x-13,yy+9+Math.max(0,step),10,9,a.dark);
- R(x+3,yy+9+Math.max(0,-step),10,9,a.dark);
- R(x-10,yy+11+Math.max(0,step),7,6,a.base);
- R(x+5,yy+11+Math.max(0,-step),7,6,a.base);
- // little paws waving on opposite beats
- R(x-17,yy-3-step/3,7,12,a.dark);R(x-15,yy-2-step/3,5,10,a.base);
- R(x+10,yy-3+step/3,7,12,a.dark);R(x+12,yy-2+step/3,5,10,a.base);
- if(a.kind==='momonga'){R(x-22,yy-4,13,14,'#d8e0e8');R(x+10,yy-4,13,14,'#d8e0e8')}
- if(a.kind==='kani'){R(x-22,yy-23,8,9,'#e9a0a2');R(x+14,yy-23,8,9,'#e9a0a2');R(x-22,yy-30,8,12,'#d88992');R(x+14,yy-30,8,12,'#d88992')}
- if(a.kind==='usagi'){
-  R(x-13,yy-48,10,27,a.dark);R(x-11,yy-50,7,29,a.base);R(x-8,yy-46,4,20,a.inner);
-  R(x+3,yy-48,10,27,a.dark);R(x+5,yy-50,7,29,a.base);R(x+7,yy-46,4,20,a.inner)
- }else if(a.kind==='momonga'){
-  R(x-17,yy-35,15,16,a.dark);R(x-15,yy-33,11,11,a.light);
-  R(x+2,yy-35,15,16,a.dark);R(x+4,yy-33,11,11,a.light)
+ let st=walking.get(p.id);
+ if(!st||st.room!==p.room)st={room:p.room,x:p.x,y:p.y,t:now,phase:0,walkingUntil:0};
+ const delta=Math.hypot(p.x-st.x,p.y-st.y);
+ const dt=Math.min(.05,Math.max(0,(now-st.t)/1000));
+ if(delta>.2&&delta<70)st.walkingUntil=now+160;
+ const moving=now<st.walkingUntil;
+ if(moving)st.phase+=dt*15;
+ st.x=p.x;st.y=p.y;st.t=now;st.room=p.room;walking.set(p.id,st);
+ const bob=moving?Math.abs(Math.sin(st.phase))*2.6:0;
+ const tilt=moving?Math.sin(st.phase)*.055:0;
+ g.save();
+ if(p.ghost)g.globalAlpha=.43;
+ circle(x,y+9,15,'#53634b60');
+ if(spriteSheet.complete&&spriteSheet.naturalWidth){
+   g.translate(x,y-23-bob);
+   g.rotate(tilt);
+   g.imageSmoothingEnabled=false;
+   g.drawImage(spriteSheet,index*72,0,72,72,-31,-40,62,62);
+   // Tiny alternating feet accents reinforce the walk cycle.
+   if(moving){
+     const step=Math.sin(st.phase);
+     R(-10,17+(step>0?2:0),5,3,'#fff5ea');
+     R(5,17+(step<0?2:0),5,3,'#fff5ea');
+   }
  }else{
-  R(x-16,yy-34,13,15,a.dark);R(x-13,yy-33,9,10,a.base);
-  R(x+3,yy-34,13,15,a.dark);R(x+5,yy-33,9,10,a.base);
+   text(ANIMALS[index].emoji,x,y-15,'#55433b',34);
  }
- // pear-shaped round body + oversize head
- R(x-13,yy-7,26,23,a.dark);R(x-11,yy-8,22,20,a.shirt);R(x-7,yy-1,14,8,a.light);
- R(x-18,yy-29,36,29,a.dark);R(x-16,yy-31,32,31,a.base);R(x-13,yy-27,26,22,a.light);
- if(a.kind==='hachiware'){
-   // blue two-part hair cap
-   R(x-14,yy-29,13,8,'#78a8c7');R(x+2,yy-29,12,8,'#78a8c7');
-   R(x-10,yy-23,8,5,'#78a8c7');R(x+3,yy-23,8,5,'#78a8c7')
- }else if(a.kind==='momonga'){
-   R(x-16,yy-31,32,11,'#b7c5e2');R(x-9,yy-24,18,5,'#dde5f8')
- }else if(a.kind==='kurimanju'){
-   R(x-14,yy-31,28,8,'#805d43');R(x-10,yy-25,20,5,'#a77c52')
- }else if(a.kind==='shisa'){
-   R(x-17,yy-33,6,8,'#bc8b5e');R(x+11,yy-33,6,8,'#bc8b5e');
-   R(x-7,yy-37,14,8,'#be9566')
- }else if(a.kind==='rakko'){
-   R(x-15,yy-31,30,10,'#9c8879');R(x-3,yy-35,6,7,'#e4d4c0')
- }
- R(x-9,yy-18,4,5,'#413c3a');R(x+5,yy-18,4,5,'#413c3a');
- R(x-8,yy-18,2,2,'#fff');R(x+6,yy-18,2,2,'#fff');
- R(x-13,yy-12,5,4,'#edb0aa');R(x+8,yy-12,5,4,'#edb0aa');
- R(x-1,yy-12,3,3,a.dark);
- if(a.kind==='usagi'){R(x-1,yy-7,4,2,'#9c6e54')}
- if(a.kind==='kani'){R(x+11,yy-34,6,5,'#c98f8c')}
- if(p.id===selfId){R(x-21,y+23,42,3,'#fff3bc');R(x-21,y+20,4,5,'#fff3bc');R(x+17,y+20,4,5,'#fff3bc')}
  g.restore();
- text(p.name,x,yy-(a.kind==='usagi'?58:46),'#574d40',12)
+ if(p.id===selfId){R(x-23,y+14,46,3,'#fff3bc');R(x-23,y+11,4,6,'#fff3bc');R(x+19,y+11,4,6,'#fff3bc')}
+ text(p.name,x,y-68-bob,'#5c4a3c',12)
 }
 function stage(){if(!me)return;const isOut=me.room==='outside';g.save();if(isOut){const zoom=1.52;g.translate(CW/2-me.x*zoom,CH/2-me.y*zoom);g.scale(zoom,zoom);outdoor()}else{const zoom=1.68;g.translate(CW/2-205*zoom,CH/2-150*zoom);g.scale(zoom,zoom);indoor(me.room)}const now=performance.now()/330;for(const t of taskItems){if(t.room!==me.room||!myTask(t))continue;circle(t.x,t.y,11+Math.sin(now+t.id)*2,'#ffe3a0');circle(t.x,t.y,5,'#dc9955');text('!',t.x,t.y+5,'#6f4f2b',14)}for(const b of bodies){if(!bodiesVisible(b))continue;circle(b.x,b.y+8,16,'#927b80');text('💤',b.x,b.y+4,'#fff',22);text('R 신고',b.x,b.y-24,'#a45556',12)}for(const p of players.slice().sort((a,b)=>a.y-b.y)){if(!playerVisible(p))continue;sprite(p)}g.restore(); // sight is a true circular field centered on player; outside is dark and never shows players or bodies.
 const gradient=g.createRadialGradient(CW/2,CH/2,VIEW*1.52*.58,CW/2,CH/2,VIEW*1.52*1.18);gradient.addColorStop(0,'rgba(14,31,25,0)');gradient.addColorStop(.76,'rgba(14,31,25,.18)');gradient.addColorStop(1,'rgba(14,31,25,.95)');if(isOut){g.fillStyle=gradient;g.fillRect(0,0,CW,CH)}else{const indoorShade=g.createRadialGradient(CW/2,CH/2,165,CW/2,CH/2,330);indoorShade.addColorStop(0,'rgba(0,0,0,0)');indoorShade.addColorStop(1,'rgba(31,29,23,.34)');g.fillStyle=indoorShade;g.fillRect(0,0,CW,CH)}}
 let chosen=0;const animals=ANIMALS.map(a=>a.emoji);
-function welcome(){mode='menu';show(`<h2>🌰 도토리 마을 입장</h2><p class="hint">친구들이 같은 주소로 접속해서 닉네임을 정하고 방 코드로 모여 보자! (3~12명)</p><label>닉네임</label><input id="nick" maxlength="12" placeholder="예: 콩쪽이" autocomplete="off"><p class="hint">내 캐릭터 선택</p><div class="selectrow" id="animalSelect"></div><div class="buttons"><button class="primary" id="create">🏠 새 방 만들기</button></div><p class="hint">또는 친구의 방 코드로 입장</p><input id="codeInput" maxlength="6" placeholder="6자리 방 코드"><div class="buttons"><button id="join">🔑 코드로 입장</button></div><p id="err" class="hint"></p>`);const options=$('animalSelect');animals.forEach((a,i)=>{const b=document.createElement('button');b.textContent=a+' '+ANIMALS[i].name;b.className=i===chosen?'active':'';b.onclick=()=>{chosen=i;[...options.children].forEach(x=>x.classList.remove('active'));b.classList.add('active')};options.appendChild(b)});const nick=()=>$('nick').value.trim();$('create').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('create',{name:nick(),icon:chosen})};$('join').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('join',{name:nick(),icon:chosen,code:$('codeInput').value.trim()})};$('codeInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase())}
+function welcome(){mode='menu';show(`<h2>🌰 도토리 마을 입장</h2><p class="hint">친구들이 같은 주소로 접속해서 닉네임을 정하고 방 코드로 모여 보자! (3~12명)</p><label>닉네임</label><input id="nick" maxlength="12" placeholder="예: 콩쪽이" autocomplete="off"><p class="hint">내 캐릭터 선택</p><div class="selectrow" id="animalSelect"></div><div class="buttons"><button class="primary" id="create">🏠 새 방 만들기</button></div><p class="hint">또는 친구의 방 코드로 입장</p><input id="codeInput" maxlength="6" placeholder="6자리 방 코드"><div class="buttons"><button id="join">🔑 코드로 입장</button></div><p id="err" class="hint"></p>`);const options=$('animalSelect');animals.forEach((a,i)=>{const b=document.createElement('button');b.innerHTML='<span class="avatar-thumb" style="background-position:-'+(i*54)+'px 0"></span><span>'+esc(ANIMALS[i].name)+'</span>';b.className=i===chosen?'active':'';b.onclick=()=>{chosen=i;[...options.children].forEach(x=>x.classList.remove('active'));b.classList.add('active')};options.appendChild(b)});const nick=()=>$('nick').value.trim();$('create').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('create',{name:nick(),icon:chosen})};$('join').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('join',{name:nick(),icon:chosen,code:$('codeInput').value.trim()})};$('codeInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase())}
 function lobbyUI(){if(!lobbyData||lobbyData.phase!=='lobby')return;mode='lobby';const people=lobbyData.players;const isHost=lobbyData.host===socket.id;show(`<div class="center"><h2>🌰 대기실 (${people.length}/12)</h2><p>친구에게 방 코드를 알려줘!</p><div class="code">${esc(lobbyData.code)}</div><button id="copy">📋 코드 복사</button></div><div class="lobbylist">${people.map(p=>`<div><span>${animals[p.icon]} ${esc(p.name)} ${p.id===socket.id?'(나)':''}${p.id===lobbyData.host?' 👑':''}</span><b>${p.ready?'✅ 준비':'⌛ 대기'}</b></div>`).join('')}</div><div class="buttons"><button id="ready">${people.find(p=>p.id===socket.id)?.ready?'준비 취소':'✅ 준비하기'}</button>${isHost?'<button class="primary" id="begin" '+(people.length>=3&&people.length<=12&&people.every(p=>p.ready)?'':'disabled')+'>🎮 게임 시작</button>':''}</div><p class="hint">3명 이상 모두 준비하면 방장이 시작할 수 있어. 3~6명은 마피아 1명, 7~10명은 2명, 11~12명은 3명이야.</p>`);$('copy').onclick=()=>{navigator.clipboard?.writeText(lobbyData.code).then(()=>toast('방 코드를 복사했어!')).catch(()=>toast('화면의 코드를 친구에게 알려줘!'))};$('ready').onclick=()=>socket.emit('ready');if($('begin'))$('begin').onclick=()=>socket.emit('start')}
 function interact(){if(mode!=='play'||!me)return;if(me.room!=='outside'&&dist(me,{x:205,y:274})<48){socket.emit('enter');keys={};return}if(nearestDoor()){socket.emit('enter');keys={};return}const task=nearTask();if(task){socket.emit('taskOpen',{id:task.id});return}toast('문이나 미션 표식 가까이 가서 E를 눌러봐!')}
 function mini(data){if(mode!=='play')return;mode='mini';miniState={...data,pos:0};keys={};renderMini()}
