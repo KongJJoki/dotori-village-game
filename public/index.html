@@ -114,10 +114,11 @@ function sprite(p){
  const x=Math.round(p.x),y=Math.round(p.y),now=performance.now();
  let motion=walkMemory.get(id);
  if(!motion||motion.room!==p.room){motion={x:p.x,y:p.y,room:p.room,time:now,activity:0,phase:0,face:1}}
- const delta=Math.hypot(p.x-motion.x,p.y-motion.y),dt=Math.max(.016,(now-motion.time)/1000);
- const moving=delta>.15&&delta<65;
- if(moving){motion.activity=Math.min(1,motion.activity+.22);motion.phase+=Math.min(delta,15)*.17;motion.face=p.x-motion.x<-.3?-1:p.x-motion.x>.3?1:motion.face}
- else motion.activity=Math.max(0,motion.activity-.11);
+ const delta=Math.hypot(p.x-motion.x,p.y-motion.y),dt=Math.min(.05,Math.max(.008,(now-motion.time)/1000));
+ if(delta>.15&&delta<65){motion.lastMoving=now;motion.face=p.x-motion.x<-.3?-1:p.x-motion.x>.3?1:motion.face}
+ const moving=now-(motion.lastMoving||0)<145;
+ if(moving){motion.activity=Math.min(1,motion.activity+dt*7);motion.phase+=dt*15}
+ else motion.activity=Math.max(0,motion.activity-dt*6);
  motion.x=p.x;motion.y=p.y;motion.room=p.room;motion.time=now;walkMemory.set(id,motion);
  const swing=Math.sin(motion.phase)*motion.activity,hop=Math.abs(Math.sin(motion.phase))*(motion.activity*2.2),step=Math.round(swing*5);
  const yy=Math.round(y-hop);
