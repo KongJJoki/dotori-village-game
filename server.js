@@ -18,7 +18,7 @@ const server=http.createServer((req,res)=>{
 const io=new Server(server,{maxHttpBufferSize:16384, cors:{origin:false}}),rooms=new Map();
 const BUILDINGS=[{id:'bakery',x:95,y:95,w:182,h:130,doorX:184,doorY:240},{id:'storage',x:728,y:185,w:180,h:133,doorX:820,doorY:331},{id:'windmill',x:660,y:45,w:124,h:96,doorX:725,doorY:156}];
 const TASKS=[{room:'outside',x:408,y:275},{room:'outside',x:515,y:334},{room:'outside',x:425,y:595},{room:'outside',x:155,y:550},{room:'outside',x:588,y:494},{room:'bakery',x:125,y:95},{room:'bakery',x:290,y:183},{room:'storage',x:135,y:112},{room:'storage',x:291,y:190},{room:'windmill',x:212,y:112},{room:'windmill',x:125,y:191}];
-const MAX_PLAYERS=12,MIN_PLAYERS=3,AVATAR_COUNT=8;
+const MAX_PLAYERS=12,MIN_PLAYERS=3,AVATAR_COUNT=12;
 function spawn(index,count){const angle=2*Math.PI*index/count;return {x:475+Math.cos(angle)*54,y:385+Math.sin(angle)*54}};
 function mafiaCount(count){return count>=11?3:count>=7?2:1}
 const clamp=(v,l,h)=>Math.min(h,Math.max(l,v));const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);const shuffled=a=>[...a].sort(()=>Math.random()-.5);
