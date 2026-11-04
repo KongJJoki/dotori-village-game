@@ -2,7 +2,19 @@
 const http=require('http'),fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {Server}=require('socket.io');
 const MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8'};
-const server=http.createServer((req,res)=>{const file=path.join(__dirname,'public',req.url==='/'?'index.html':decodeURIComponent((req.url||'').split('?')[0]));if(!file.startsWith(path.join(__dirname,'public')+path.sep)&&file!==path.join(__dirname,'public','index.html')){res.writeHead(403).end();return}fs.readFile(file,(err,data)=>{if(err){res.writeHead(404).end('Not found');return}res.writeHead(200,{'Content-Type':MIME[path.extname(file)]||'application/octet-stream','Cache-Control':'no-cache'}).end(data)})});
+const PUBLIC_DIR=path.join(__dirname,'public');
+const server=http.createServer((req,res)=>{
+  let pathname;
+  try{pathname=new URL(req.url||'/', 'http://localhost').pathname}catch{return res.writeHead(400).end('Bad request')}
+  if(pathname==='/health')return res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8'}).end('OK');
+  const relativePath=pathname==='/'?'index.html':pathname.replace(/^\/+/, '');
+  const file=path.resolve(PUBLIC_DIR,relativePath);
+  if(file!==PUBLIC_DIR&&!file.startsWith(PUBLIC_DIR+path.sep))return res.writeHead(403).end('Forbidden');
+  fs.readFile(file,(err,data)=>{
+    if(err)return res.writeHead(404,{'Content-Type':'text/plain; charset=utf-8'}).end('Not found: '+pathname);
+    res.writeHead(200,{'Content-Type':MIME[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'}).end(data);
+  });
+});
 const io=new Server(server,{maxHttpBufferSize:16384, cors:{origin:false}}),rooms=new Map();
 const BUILDINGS=[{id:'bakery',x:95,y:95,w:182,h:130,doorX:184,doorY:240},{id:'storage',x:728,y:185,w:180,h:133,doorX:820,doorY:331},{id:'windmill',x:660,y:45,w:124,h:96,doorX:725,doorY:156}];
 const TASKS=[{room:'outside',x:408,y:275},{room:'outside',x:515,y:334},{room:'outside',x:425,y:595},{room:'outside',x:155,y:550},{room:'outside',x:588,y:494},{room:'bakery',x:125,y:95},{room:'bakery',x:290,y:183},{room:'storage',x:135,y:112},{room:'storage',x:291,y:190},{room:'windmill',x:212,y:112},{room:'windmill',x:125,y:191}];
