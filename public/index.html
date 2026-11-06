@@ -13,9 +13,24 @@ button.primary{background:#75a386;border-color:#568363}button.danger{background:
 h1{letter-spacing:-1px;text-shadow:1px 2px #fff}.where{border:2px solid #bda681}.modal{border-color:#ac9576}
 
 .lobbylist{display:grid;gap:7px;margin:12px 0}.lobbylist>div{background:#f2e8d3;padding:11px;border-radius:10px;display:flex;justify-content:space-between}.selectrow{display:flex;gap:6px;justify-content:center;margin:12px 0}.selectrow button.active{outline:3px solid #6b9877;background:#d4e9ce}.code{font-size:30px;font-weight:900;letter-spacing:6px;text-align:center;color:#4b7058}.onlineStatus{font-size:12px;color:#64836a}.meetingchat{height:180px}.where{pointer-events:none}
- .selectrow{flex-wrap:wrap;justify-content:flex-start;gap:8px}.selectrow button{font-size:14px;min-width:115px;background:#fffaf0;transition:transform .12s,background .12s}.selectrow button:hover{transform:translateY(-2px)}.quickArea{margin:10px 0;padding:12px;border:2px dashed #b7a684;border-radius:11px;background:#f3ecd5}.quickArea b{margin-left:10px;color:#52765c}.modal{background:linear-gradient(155deg,#fff9ed,#f6ebd6)}.gamepane{background:linear-gradient(180deg,#fff8e7,#f4e8d4)}.head h1{font-weight:900}.panel h2{border-bottom:2px dashed #e6d7b9;padding-bottom:7px}.person{transition:background .2s}.person:hover{background:#fbeed4}.selectrow button{display:flex;align-items:center;flex-direction:column;gap:3px;justify-content:center;min-width:106px}.avatar-thumb{width:54px;height:69px;display:inline-block;background-size:216px 69px;background-repeat:no-repeat;image-rendering:auto}.lobby-avatar{width:28px;height:36px;background-size:112px 36px;display:inline-block;vertical-align:middle;margin-right:4px}.person{gap:8px}</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 온라인 멀티플레이 v1.5 · 3~12명</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
+ .selectrow{flex-wrap:wrap;justify-content:flex-start;gap:8px}.selectrow button{font-size:14px;min-width:115px;background:#fffaf0;transition:transform .12s,background .12s}.selectrow button:hover{transform:translateY(-2px)}.quickArea{margin:10px 0;padding:12px;border:2px dashed #b7a684;border-radius:11px;background:#f3ecd5}.quickArea b{margin-left:10px;color:#52765c}.modal{background:linear-gradient(155deg,#fff9ed,#f6ebd6)}.gamepane{background:linear-gradient(180deg,#fff8e7,#f4e8d4)}.head h1{font-weight:900}.panel h2{border-bottom:2px dashed #e6d7b9;padding-bottom:7px}.person{transition:background .2s}.person:hover{background:#fbeed4}.selectrow button{display:flex;align-items:center;flex-direction:column;gap:3px;justify-content:center;min-width:106px}.avatar-thumb{width:54px;height:69px;display:inline-block;background-size:216px 69px;background-repeat:no-repeat;image-rendering:auto}.lobby-avatar{width:28px;height:36px;background-size:112px 36px;display:inline-block;vertical-align:middle;margin-right:4px}.person{gap:8px}
+.vote button{min-height:48px;display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap}
+.vote button.vote-selected,.vote button.vote-selected:disabled{background:#d4ebd5!important;border:3px solid #438b55!important;color:#244d34!important;box-shadow:0 0 0 2px #edf7e9!important;opacity:1!important}
+.vote button.vote-selected::after{content:'✓ 내 투표';font-size:11px;font-weight:800;color:#25663a}
+.vote button.vote-pending{border-color:#688d9e;background:#e4eff1}
+.vote-report{padding:11px;border-radius:12px;background:#f3eddc;border:2px solid #d3c1a0;margin:9px 0}
+.vote-report-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:750;font-size:14px}
+.vote-track{height:10px;border-radius:9px;background:#e0d6c2;overflow:hidden;margin:8px 0}
+.vote-track>div{height:100%;width:0;background:#69a77a;transition:width .25s}
+.vote-leader{font-size:13px;color:#6b5037;margin:5px 0}
+.vote-tallies{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:12px}
+.vote-tallies>div{padding:5px 7px;background:#fffaf0;border-radius:7px;display:flex;justify-content:space-between;gap:6px}
+.vote-tallies .leading{outline:2px solid #d3ae60;background:#fff0c5}
+#myVote{font-weight:800;color:#2f764b;font-size:13px;margin:7px 0}
+@media(max-width:460px){.vote-tallies{grid-template-columns:1fr}}
+</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 온라인 멀티플레이 v1.5 · 3~12명</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
 (()=>{'use strict';
-const socket=io();let roomCode='',selfId='',host='',lobbyData=null,mode='menu',keys={},players=[],me=null,bodies=[],taskItems=[],progress=0,total=12,notice=0,meetingEnds=0,voteStarts=0,quickCount=0,quickTotal=0,quickPressed=false,miniState=null,taskDone=[],killCD=12,roster=[];
+const socket=io();let roomCode='',selfId='',host='',lobbyData=null,mode='menu',keys={},players=[],me=null,bodies=[],taskItems=[],progress=0,total=12,notice=0,meetingEnds=0,voteStarts=0,quickCount=0,quickTotal=0,quickPressed=false,myVotedId=null,votePending=false,meetingCandidates=[],voteReport=null,miniState=null,taskDone=[],killCD=12,roster=[];
 const C=document.getElementById('game'),g=C.getContext('2d');g.imageSmoothingEnabled=true;
 const $=id=>document.getElementById(id),CW=800,CH=600,MW=1000,MH=730,VIEW=172;
 const BUILDINGS=[{id:'bakery',name:'빵집',icon:'🍞',x:95,y:95,w:182,h:130,doorX:184,doorY:240,wall:'#eacda1',roof:'#c98278'},{id:'storage',name:'창고',icon:'📦',x:728,y:185,w:180,h:133,doorX:820,doorY:331,wall:'#dac9aa',roof:'#ad836b'},{id:'windmill',name:'풍차',icon:'⚙️',x:660,y:45,w:124,h:96,doorX:725,doorY:156,wall:'#ead9ae',roof:'#c29a75'}];
@@ -134,18 +149,85 @@ function lobbyUI(){if(!lobbyData||lobbyData.phase!=='lobby')return;mode='lobby';
 function interact(){if(mode!=='play'||!me)return;if(me.room!=='outside'&&dist(me,{x:205,y:274})<48){socket.emit('enter');keys={};return}if(nearestDoor()){socket.emit('enter');keys={};return}const task=nearTask();if(task){socket.emit('taskOpen',{id:task.id});return}toast('문이나 미션 표식 가까이 가서 E를 눌러봐!')}
 function mini(data){if(mode!=='play')return;mode='mini';miniState={...data,pos:0};keys={};renderMini()}
 function renderMini(){const s=miniState;if(!s)return;const t=TASKS[s.id],icons=['🌰','🍞','🌼'];show(`<h2>${t.icon} ${esc(t.name)}</h2><p class="hint">순서대로 같은 그림을 눌러 미션을 완료해!</p><div class="center"><b>${s.pos+1}/3 · ${icons[s.seq[s.pos]]}</b></div><div class="mini">${icons.map((e,i)=>`<button data-mini="${i}">${e}</button>`).join('')}</div><button id="cancel">취소</button>`);document.querySelectorAll('[data-mini]').forEach(b=>b.onclick=()=>socket.emit('taskStep',{n:Number(b.dataset.mini)}));$('cancel').onclick=()=>{socket.emit('taskCancel');miniState=null;mode='play';close()}}
-function meetingUI(data){mode='meeting';keys={};meetingEnds=data.ends;voteStarts=data.voteStarts||data.ends-45000;quickCount=data.quickCount||0;quickTotal=data.quickTotal||data.players.length;quickPressed=false;const ghost=me&&!me.alive;show(`<h2>📣 마을 회의</h2><p>${esc(data.reason)}</p><p class="hint">${ghost?'👻 관전 중 · 채팅을 읽을 수 있지만 참여할 수 없어.':'텍스트로 추리하고 투표해!'} · <b id="countdown"></b></p><div class="meetingchat" id="meetingChat"></div>${ghost?'':`<form id="meetingForm" class="chatinput"><input id="meetingInput" maxlength="120" placeholder="회의 채팅"><button>보내기</button></form><div id="quickArea" class="quickArea"><button class="primary" id="quickVoteBtn">⚡ 바로 투표하기</button><b id="quickCount">0 / 0명 동의</b><p class="hint">생존자 전원이 누르면 토론을 바로 끝내고 투표해!</p></div><h3>🗳️ 투표</h3><p class="hint" id="voteHint">토론이 끝나면 투표할 수 있어!</p><div class="vote" id="votebox"></div>`}`);if(!ghost){$('quickVoteBtn').onclick=()=>{if(quickPressed||Date.now()>=voteStarts)return;quickPressed=true;$('quickVoteBtn').disabled=true;socket.emit('quickVote')};for(const p of data.players){const b=document.createElement('button');b.innerHTML=avatarHTML(p.icon,true)+' '+esc(p.name);b.dataset.vote='1';b.onclick=()=>{if(Date.now()<voteStarts)return toast('아직 토론 시간이야!');socket.emit('vote',{id:p.id})};$('votebox').appendChild(b)}const skip=document.createElement('button');skip.textContent='건너뛰기';skip.dataset.vote='1';skip.onclick=()=>{if(Date.now()<voteStarts)return toast('아직 토론 시간이야!');socket.emit('vote',{id:'skip'})};$('votebox').appendChild(skip);$('meetingForm').onsubmit=e=>{e.preventDefault();sendChat($('meetingInput'))}}chat('시스템',data.reason,'meetingChat')}
+function updateVoteReport(data){
+ voteReport=data;
+ if(!$('voteCount'))return;
+ $('voteCount').textContent=data.voted+' / '+data.total+'명 완료 · '+data.remaining+'명 남음';
+ $('voteProgress').style.width=(data.total?100*data.voted/data.total:0)+'%';
+ const ordered=[...data.tally].sort((a,b)=>b.count-a.count);
+ const top=ordered[0]?.count||0;
+ const leaders=top?ordered.filter(p=>p.count===top).map(p=>p.name):[];
+ $('voteLeader').textContent=top?'🏅 현재 최다 득표: '+leaders.map(esc).join(', ')+' ('+top+'표)':'아직 투표가 없어!';
+ $('voteTallies').innerHTML=data.tally.map(p=>'<div class="'+(top&&p.count===top?'leading':'')+'"><span>'+esc(p.name)+'</span><b>'+p.count+'표</b></div>').join('');
+}
+function meetingUI(data){
+ mode='meeting';keys={};meetingEnds=data.ends;voteStarts=data.voteStarts||data.ends-45000;
+ quickCount=data.quickCount||0;quickTotal=data.quickTotal||data.players.length;quickPressed=false;
+ myVotedId=null;votePending=false;meetingCandidates=data.players;
+ const ghost=me&&!me.alive;
+ show(`<h2>📣 마을 회의</h2><p>${esc(data.reason)}</p>
+ <p class="hint">${ghost?'👻 관전 중 · 채팅을 읽을 수 있지만 참여할 수 없어.':'텍스트로 추리하고 투표해!'} · <b id="countdown"></b></p>
+ <div class="vote-report"><div class="vote-report-top"><span>🗳️ 실시간 투표 현황</span><span id="voteCount">0 / ${data.players.length}명 완료</span></div>
+ <div class="vote-track"><div id="voteProgress"></div></div><p class="vote-leader" id="voteLeader">아직 투표가 없어!</p>
+ <div class="vote-tallies" id="voteTallies"></div></div>
+ <div class="meetingchat" id="meetingChat"></div>
+ ${ghost?'':`<form id="meetingForm" class="chatinput"><input id="meetingInput" maxlength="120" placeholder="회의 채팅"><button>보내기</button></form>
+ <div id="quickArea" class="quickArea"><button class="primary" id="quickVoteBtn">⚡ 바로 투표하기</button><b id="quickCount">0 / 0명 동의</b><p class="hint">생존자 전원이 누르면 토론을 바로 끝내고 투표해!</p></div>
+ <h3>🗳️ 투표하기</h3><p class="hint" id="voteHint">토론이 끝나면 투표할 수 있어!</p>
+ <div id="myVote" role="status" aria-live="polite">아직 투표하지 않았어.</div><div class="vote" id="votebox"></div>`}`);
+ const entries=[...data.players.map(p=>({id:p.id,name:p.name,icon:p.icon})),{id:'skip',name:'건너뛰기'}];
+ if(!ghost){
+  $('quickVoteBtn').onclick=()=>{if(quickPressed||Date.now()>=voteStarts)return;quickPressed=true;$('quickVoteBtn').disabled=true;socket.emit('quickVote')};
+  for(const p of entries){
+   const b=document.createElement('button');
+   b.innerHTML=(p.id==='skip'?'':avatarHTML(p.icon,true)+' ')+esc(p.name);
+   b.dataset.vote='1';b.dataset.candidate=p.id;
+   b.onclick=()=>{
+    if(Date.now()<voteStarts)return toast('아직 토론 시간이야!');
+    if(myVotedId!==null||votePending)return;
+    votePending=true;$('myVote').textContent='⏳ 투표를 등록하고 있어...';
+    socket.emit('vote',{id:p.id});
+    refreshVoteButtons();
+   };
+   $('votebox').appendChild(b);
+  }
+  $('meetingForm').onsubmit=e=>{e.preventDefault();sendChat($('meetingInput'))};
+ }
+ updateVoteReport({voted:0,total:data.players.length,remaining:data.players.length,tally:entries.map(p=>({id:p.id,name:p.name,count:0}))});
+ chat('시스템',data.reason,'meetingChat');
+}
+function refreshVoteButtons(){
+ const isDiscussion=Date.now()<voteStarts;
+ document.querySelectorAll('[data-vote]').forEach(b=>{
+  const selected=myVotedId===b.dataset.candidate;
+  b.classList.toggle('vote-selected',selected);
+  b.classList.toggle('vote-pending',votePending&&!selected);
+  b.disabled=isDiscussion||myVotedId!==null||votePending;
+ });
+}
 function sendChat(input){if(me&&!me.alive)return;const value=input.value.trim();if(value)socket.emit('chat',{message:value});input.value=''}
 socket.on('connect',()=>{$('net').textContent='🟢 서버 연결됨';if(!roomCode)welcome()});socket.on('disconnect',()=>{$('net').textContent='🔴 연결 끊김';show('<h2>연결이 끊어졌어</h2><p>페이지를 새로고침해 다시 방을 만들어줘.</p><button onclick="location.reload()">새로고침</button>')});socket.on('notice',toast);
 socket.on('lobby',data=>{roomCode=data.code;host=data.host;lobbyData=data;if(data.phase==='lobby')lobbyUI()});
 socket.on('started',data=>{selfId=data.me.id;mode='play';taskItems=TASKS.map((t,id)=>({...t,id}));me={...data.me,x:470,y:380,room:'outside',alive:true,done:[]};taskDone=[];total=data.total;progress=0;$('chat').innerHTML='';close();toast(me.mafia?'😈 네가 마피아야! 시민을 습격해!':'🐰 네가 시민이야! 미션을 완료해!');chat('시스템','게임 시작! 건물 문과 미션에 가까이 다가가 E를 눌러봐.')});
 socket.on('view',data=>{if(!selfId||mode==='end')return;const priorRoom=me?.room;me={...data.me,name:lobbyData?.players.find(p=>p.id===selfId)?.name||'나',icon:lobbyData?.players.find(p=>p.id===selfId)?.icon||0};me.ghost=!me.alive;players=data.people.map(p=>({...p,alive:p.id===selfId?me.alive:true}));const i=players.findIndex(p=>p.id===selfId);if(i>=0)players[i]=me;else players.push(me);bodies=data.bodies;progress=data.completed;total=data.total;killCD=data.me.killCD||0;taskDone=data.me.done||[];roster=data.roster;const s=data.seconds;$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(priorRoom!==me.room)keys={};if(mode==='play'&&data.phase==='meeting')mode='meeting';const disabled=!me.alive;$('message').disabled=disabled;$('chatForm').querySelector('button').disabled=disabled;$('message').placeholder=disabled?'👻 사망자는 채팅을 보낼 수 없어요':'Enter로 채팅하기';if(mode==='play'&&data.phase==='play'){}syncUI()});
 socket.on('mini',mini);socket.on('miniWrong',()=>toast('다른 그림을 눌러봐!'));socket.on('miniNext',({pos})=>{if(miniState){miniState.pos=pos;renderMini()}});socket.on('miniDone',({fake})=>{mode='play';miniState=null;close();toast(fake?'😈 가짜 미션 완료!':'✨ 미션 완료!')});socket.on('killed',()=>toast('💤 당했어! 유령 상태로 미션을 이어갈 수 있어.'));
-socket.on('meeting',meetingUI);socket.on('quickVoteCount',data=>{quickCount=data.count;quickTotal=data.total;if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'});socket.on('meetingPhase',data=>{voteStarts=data.voteStarts;meetingEnds=data.ends;toast('⚡ 모두 동의! 지금부터 투표 시작!')});socket.on('chat',data=>chat(data.name,data.message,data.meeting?'meetingChat':'chat'));
-socket.on('voteResult',data=>{mode='pause';show(`<h2>🗳️ 회의 결과</h2><p>${data.kicked?esc(data.kicked)+'이(가) 추방됐어!':'아무도 추방되지 않았어!'}</p><button id="continue" class="primary">마을로 돌아가기</button>`);$('continue').onclick=()=>{mode='play';close()}});socket.on('ended',data=>{mode='end';show(`<div class="center"><div class="emoji">🌰🎉</div><h2>${data.winner==='citizens'?'🎉 시민 승리!':data.winner==='mafia'?'😈 마피아 승리!':'게임 종료'}</h2><p>${esc(data.reason)}</p><p>마피아는 <b>${esc(data.mafia)}</b>였어!</p><button onclick="location.reload()" class="primary">새 방에서 다시 하기</button></div>`)});
+socket.on('meeting',meetingUI);
+socket.on('quickVoteCount',data=>{quickCount=data.count;quickTotal=data.total;if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'});
+socket.on('meetingPhase',data=>{voteStarts=data.voteStarts;meetingEnds=data.ends;toast('⚡ 모두 동의! 지금부터 투표 시작!')});
+socket.on('voteStatus',data=>{if(mode==='meeting')updateVoteReport(data)});
+socket.on('voteAccepted',data=>{
+ if(mode!=='meeting')return;
+ myVotedId=data.id;votePending=false;
+ const target=meetingCandidates.find(p=>p.id===data.id);
+ if($('myVote'))$('myVote').textContent='✅ 투표 완료! 내 선택: '+(data.id==='skip'?'건너뛰기':target?.name||'선택한 플레이어');
+ refreshVoteButtons();
+ toast('✅ 투표가 등록됐어!');
+});
+socket.on('chat',data=>chat(data.name,data.message,data.meeting?'meetingChat':'chat'));
+socket.on('voteResult',data=>{mode='pause';show(`<h2>🗳️ 회의 결과</h2><p>${data.kicked?esc(data.kicked)+'이(가) 추방됐어!':'아무도 추방되지 않았어!'}</p><div class="vote-report"><b>최종 득표</b><div class="vote-tallies">${(data.tally||[]).sort((a,b)=>b.votes-a.votes).map(x=>'<div><span>'+esc(x.name)+'</span><b>'+x.votes+'표</b></div>').join('')}</div></div><button id="continue" class="primary">마을로 돌아가기</button>`);$('continue').onclick=()=>{mode='play';close()}});socket.on('ended',data=>{mode='end';show(`<div class="center"><div class="emoji">🌰🎉</div><h2>${data.winner==='citizens'?'🎉 시민 승리!':data.winner==='mafia'?'😈 마피아 승리!':'게임 종료'}</h2><p>${esc(data.reason)}</p><p>마피아는 <b>${esc(data.mafia)}</b>였어!</p><button onclick="location.reload()" class="primary">새 방에서 다시 하기</button></div>`)});
 $('action').onclick=interact;$('attack').onclick=()=>socket.emit('kill');$('report').onclick=()=>socket.emit('report');$('emergency').onclick=()=>socket.emit('emergency');$('chatForm').onsubmit=e=>{e.preventDefault();sendChat($('message'))};
 window.addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(document.activeElement?.tagName==='INPUT'){if(k==='Escape')document.activeElement.blur();return}if(k.startsWith('Arrow'))e.preventDefault();keys[k]=true;if(e.repeat)return;if(k==='e')interact();if(k==='f')socket.emit('kill');if(k==='r')socket.emit('report');if(k==='Enter'&&mode==='play')$('message').focus()});window.addEventListener('keyup',e=>keys[e.key.length===1?e.key.toLowerCase():e.key]=false);window.addEventListener('blur',()=>keys={});
 setInterval(()=>{const moving=mode==='play'||mode==='mini';const x=moving?Number(!!(keys.d||keys.ArrowRight))-Number(!!(keys.a||keys.ArrowLeft)):0,y=moving?Number(!!(keys.s||keys.ArrowDown))-Number(!!(keys.w||keys.ArrowUp)):0;if(roomCode&&selfId)socket.emit('move',{x,y})},50);
-function frame(ts){let dt=Math.min(.05,(ts-(frame.last||ts))/1000);frame.last=ts;if(notice>0){notice-=dt;if(notice<=0)$('toast').classList.add('hidden')}if(mode==='meeting'&&$('countdown')){const now=Date.now(),isDiscussion=now<voteStarts;$('countdown').textContent=(isDiscussion?'토론 ':'투표 ')+Math.max(0,Math.ceil(((isDiscussion?voteStarts:meetingEnds)-now)/1000))+'초';document.querySelectorAll('[data-vote]').forEach(b=>b.disabled=isDiscussion);if($('voteHint'))$('voteHint').textContent=isDiscussion?'토론 종료 후 투표가 열려요.':'지금 투표할 수 있어요!';if($('quickArea'))$('quickArea').style.display=isDiscussion?'':'none';if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'}R(0,0,CW,CH,'#203a31');if(me)stage();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+function frame(ts){let dt=Math.min(.05,(ts-(frame.last||ts))/1000);frame.last=ts;if(notice>0){notice-=dt;if(notice<=0)$('toast').classList.add('hidden')}if(mode==='meeting'&&$('countdown')){const now=Date.now(),isDiscussion=now<voteStarts;$('countdown').textContent=(isDiscussion?'토론 ':'투표 ')+(()=>{const sec=Math.max(0,Math.ceil(((isDiscussion?voteStarts:meetingEnds)-now)/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')})();refreshVoteButtons();if($('voteHint'))$('voteHint').textContent=isDiscussion?'토론 종료 후 투표가 열려요.':myVotedId!==null?'✅ 투표 완료! 다른 사람들의 투표를 확인해 봐.':'지금 투표할 수 있어요!';if($('quickArea'))$('quickArea').style.display=isDiscussion?'':'none';if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'}R(0,0,CW,CH,'#203a31');if(me)stage();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
 </script></body></html>
