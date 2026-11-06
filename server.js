@@ -34,6 +34,18 @@ function lobby(room){io.to(room.code).emit('lobby',{code:room.code,host:room.hos
 function started(room){return room.phase==='play'||room.phase==='meeting'}
 function win(room){if(room.phase==='end')return;const citizen=[...room.players.values()].filter(p=>p.alive&&!p.mafia).length,mafia=[...room.players.values()].filter(p=>p.alive&&p.mafia).length;if(mafia===0)finish(room,'citizens','마피아가 추방됐어!');else if(citizen<=mafia)finish(room,'mafia','마피아 수가 생존 시민 수 이상이야!');else if(room.completed>=room.total)finish(room,'citizens','모든 시민 미션 완료!')}
 function finish(room,winner,reason){room.phase='end';room.meeting=null;io.to(room.code).emit('ended',{winner,reason,mafia:[...room.players.values()].filter(p=>p.mafia).map(p=>p.name).join(', ')||'알 수 없음'});lobby(room)}
+function prepareRematch(room){
+ if(room.phase!=='end')return;
+ room.phase='lobby';
+ room.completed=0;room.total=0;room.bodies=[];room.meeting=null;room.startedAt=null;
+ for(const p of room.players.values()){
+  p.ready=false;p.alive=true;p.knownDead=false;p.mafia=false;
+  p.jobs=[];p.done=[];p.mini=null;p.meetingUsed=false;
+  p.intent={x:0,y:0};p.nextKill=0;p.room='outside';
+ }
+ io.to(room.code).emit('rematchReady');
+ lobby(room);
+}
 function start(room){if(room.phase!=='lobby'||room.players.size<MIN_PLAYERS||room.players.size>MAX_PLAYERS||[...room.players.values()].some(p=>!p.ready))return;room.phase='play';room.completed=0;room.total=(room.players.size-mafiaCount(room.players.size))*4;room.bodies=[];room.meeting=null;room.startedAt=Date.now();const arr=shuffled([...room.players.values()]);arr.forEach((p,i)=>{const position=spawn(i,arr.length);p.x=position.x;p.y=position.y;p.room='outside';p.alive=true;p.knownDead=false;p.mafia=i<mafiaCount(arr.length);p.jobs=shuffled(TASKS.map((_,i)=>i)).slice(0,4);p.done=[];p.nextKill=Date.now()+12000;p.meetingUsed=false;p.intent={x:0,y:0};p.lastMove=Date.now();p.mini=null;p.ready=false});for(const p of room.players.values())io.to(p.id).emit('started',{me:{id:p.id,mafia:p.mafia,jobs:p.jobs},total:room.total});lobby(room)}
 function voteStatus(room){
  if(room.phase!=='meeting'||!room.meeting)return;
@@ -51,6 +63,7 @@ io.on('connection',socket=>{
  socket.on('join',({name,icon,code:c}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');const room=rooms.get(String(c||'').trim().toUpperCase());if(!room||room.phase!=='lobby'||room.players.size>=MAX_PLAYERS)return reply(socket,'방 코드가 틀렸거나 입장할 수 없는 방이야.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');if(nameTaken(room,name))return reply(socket,'이미 사용 중인 닉네임이야. 다른 이름을 골라줘!');socket.data.room=room.code;socket.join(room.code);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});lobby(room)});
  socket.on('ready',()=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='lobby')return;p.ready=!p.ready;lobby(r)});
  socket.on('start',()=>{const r=getRoom(socket);if(!r||r.host!==socket.id)return;start(r)});
+ socket.on('rematch',()=>{const r=getRoom(socket);if(!r||r.phase!=='end'||r.host!==socket.id)return;prepareRematch(r)});
  socket.on('move',v=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='play'||!v)return;p.intent={x:clamp(Number(v.x)||0,-1,1),y:clamp(Number(v.y)||0,-1,1)}});
  socket.on('enter',()=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='play')return;if(p.room!=='outside'){if(dist(p,{x:205,y:274})>=48)return;const b=BUILDINGS.find(b=>b.id===p.room),pos=safeExit(b);p.x=pos.x;p.y=pos.y;p.room='outside'}else{const b=BUILDINGS.find(b=>dist(p,{x:b.doorX,y:b.doorY})<47);if(!b)return;p.room=b.id;p.x=205;p.y=242}p.intent={x:0,y:0};emitView(r,p)});
  socket.on('taskOpen',({id}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id),t=TASKS[id];if(!p||r.phase!=='play'||!t||!p.jobs.includes(id)||p.done.includes(id)||p.room!==t.room||dist(p,t)>44)return;const seq=Array.from({length:3},()=>Math.floor(Math.random()*3));p.mini={id,seq,pos:0,start:Date.now()};socket.emit('mini',{id,seq})});
@@ -71,7 +84,7 @@ io.on('connection',socket=>{
    if([...r.players.values()].filter(q=>q.alive).every(q=>r.meeting.votes.has(q.id)))finishVote(r);
   });
  socket.on('chat',({message}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||!started(r)||!p.alive)return;const msg=String(message||'').trim().slice(0,120);if(!msg)return;const now=Date.now();if(now-(p.lastChat||0)<450)return;p.lastChat=now;for(const q of r.players.values()){if(r.phase==='meeting'?true:q.alive&&q.room===p.room&&dist(p,q)<=172)io.to(q.id).emit('chat',{name:p.name,message:msg,meeting:r.phase==='meeting'})}});
- socket.on('disconnect',()=>{const r=getRoom(socket);if(!r)return;r.players.delete(socket.id);socket.data.room=null;if(!r.players.size){rooms.delete(r.code);return}if(r.host===socket.id)r.host=[...r.players.keys()][0];if(started(r)){finish(r,'cancelled','플레이어 연결이 끊겨 게임을 종료했어. 다시 방을 만들어줘.')}else lobby(r)})
+ socket.on('disconnect',()=>{const r=getRoom(socket);if(!r)return;r.players.delete(socket.id);socket.data.room=null;if(!r.players.size){rooms.delete(r.code);return}if(r.host===socket.id)r.host=[...r.players.keys()][0];if(started(r)){finish(r,'cancelled','플레이어 연결이 끊겨 게임이 종료됐어. 같은 방에서 다시 시작할 수 있어!')}else lobby(r)})
 });
 let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.06,(now-last)/1000);last=now;for(const r of rooms.values()){if(r.phase==='meeting'&&now>=r.meeting.ends)finishVote(r);if(!started(r))continue;for(const p of r.players.values()){if(r.phase==='play'){const v=p.intent||{x:0,y:0},len=Math.hypot(v.x,v.y),dx=len?v.x/Math.max(1,len):0,dy=len?v.y/Math.max(1,len):0,x=p.x+dx*145*dt,y=p.y+dy*145*dt;if(p.room==='outside'){if(!collides(x,p.y))p.x=x;if(!collides(p.x,y))p.y=y}else{p.x=clamp(x,29,380);p.y=clamp(y,38,266)}}emitView(r,p)}}},50);
 const PORT=Number(process.env.PORT||3000);server.listen(PORT,'0.0.0.0',()=>console.log(`🌰 도토리 마을: http://localhost:${PORT}`));
