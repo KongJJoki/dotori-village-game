@@ -64,8 +64,8 @@ function repairProgress(room){
 }
 function emitView(room,p){const same=q=>q.room===p.room&&dist(q,p)<=172;const people=[...room.players.values()].filter(q=>q.id===p.id||(q.alive&&same(q))).map(q=>({id:q.id,name:q.name,icon:q.icon,x:q.x,y:q.y,room:q.room,ghost:!q.alive}));const bodies=room.bodies.filter(b=>b.room===p.room&&dist(b,p)<=172).map(b=>({...b}));io.to(p.id).emit('view',{me:{id:p.id,x:p.x,y:p.y,room:p.room,alive:p.alive,mafia:p.mafia,done:p.done,jobs:p.jobs,killCD:p.mafia?Math.max(0,Math.ceil((p.nextKill-Date.now())/1000)):null,meetingUsed:p.meetingUsed,ventCD:p.mafia?Math.max(0,Math.ceil(((p.nextVent||0)-Date.now())/1000)):null,sabotageCD:p.mafia?Math.max(0,Math.ceil(((room.nextSabotage||0)-Date.now())/1000)):null},people,bodies,blackoutUntil:room.blackoutUntil||0,repairCompleted:room.repairers?.size||0,repairRequired:repairRequired(room),repairAlreadyDone:!!room.repairers?.has(p.id),roster:[...room.players.values()].map(cleanPlayer),completed:room.completed,total:room.total,phase:room.phase,seconds:Math.floor((Date.now()-room.startedAt)/1000)})}
 io.on('connection',socket=>{
- socket.on('create',({name,icon}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');const c=code(),room={code:c,host:socket.id,phase:'lobby',players:new Map(),bodies:[],completed:0,meeting:null};rooms.set(c,room);socket.data.room=c;socket.join(c);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});lobby(room)});
- socket.on('join',({name,icon,code:c}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');const room=rooms.get(String(c||'').trim().toUpperCase());if(!room||room.phase!=='lobby'||room.players.size>=MAX_PLAYERS)return reply(socket,'방 코드가 틀렸거나 입장할 수 없는 방이야.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');if(nameTaken(room,name))return reply(socket,'이미 사용 중인 닉네임이야. 다른 이름을 골라줘!');socket.data.room=room.code;socket.join(room.code);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});lobby(room)});
+ socket.on('create',({name,icon}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');const c=code(),room={code:c,host:socket.id,phase:'lobby',players:new Map(),bodies:[],completed:0,meeting:null,chatHistory:[]};rooms.set(c,room);socket.data.room=c;socket.join(c);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});socket.emit('lobbyChatHistory',room.chatHistory||[]);lobby(room)});
+ socket.on('join',({name,icon,code:c}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');const room=rooms.get(String(c||'').trim().toUpperCase());if(!room||room.phase!=='lobby'||room.players.size>=MAX_PLAYERS)return reply(socket,'방 코드가 틀렸거나 입장할 수 없는 방이야.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');if(nameTaken(room,name))return reply(socket,'이미 사용 중인 닉네임이야. 다른 이름을 골라줘!');socket.data.room=room.code;socket.join(room.code);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});socket.emit('lobbyChatHistory',room.chatHistory||[]);lobby(room)});
  socket.on('ready',()=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='lobby')return;p.ready=!p.ready;lobby(r)});
  socket.on('start',()=>{const r=getRoom(socket);if(!r||r.host!==socket.id)return;start(r)});
  socket.on('rematch',()=>{const r=getRoom(socket);if(!r||r.phase!=='end'||r.host!==socket.id)return;prepareRematch(r)});
@@ -146,7 +146,25 @@ io.on('connection',socket=>{
    voteStatus(r);
    if([...r.players.values()].filter(q=>q.alive).every(q=>r.meeting.votes.has(q.id)))finishVote(r);
   });
- socket.on('chat',({message}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||!started(r)||!p.alive)return;const msg=String(message||'').trim().slice(0,120);if(!msg)return;const now=Date.now();if(now-(p.lastChat||0)<450)return;p.lastChat=now;for(const q of r.players.values()){if(r.phase==='meeting'?true:q.alive&&q.room===p.room&&dist(p,q)<=172)io.to(q.id).emit('chat',{name:p.name,message:msg,meeting:r.phase==='meeting'})}});
+ socket.on('chat',({message}={})=>{
+  const r=getRoom(socket),p=r?.players.get(socket.id);
+  if(!p)return;
+  if((r.phase==='play'||r.phase==='meeting')&&!p.alive)return;
+  const msg=String(message||'').trim().slice(0,120);if(!msg)return;
+  const now=Date.now();if(now-(p.lastChat||0)<450)return;p.lastChat=now;
+  if(r.phase==='lobby'||r.phase==='end'){
+   const item={name:p.name,message:msg,time:now};
+   r.chatHistory??=[];r.chatHistory.push(item);
+   if(r.chatHistory.length>60)r.chatHistory.splice(0,r.chatHistory.length-60);
+   io.to(r.code).emit('lobbyChat',item);
+   return;
+  }
+  if(!started(r))return;
+  for(const q of r.players.values()){
+   if(r.phase==='meeting'||(q.alive&&q.room===p.room&&dist(p,q)<=172))
+     io.to(q.id).emit('chat',{name:p.name,message:msg,meeting:r.phase==='meeting'});
+  }
+ });
  socket.on('disconnect',()=>{const r=getRoom(socket);if(!r)return;r.players.delete(socket.id);socket.data.room=null;if(!r.players.size){rooms.delete(r.code);return}if(r.host===socket.id)r.host=[...r.players.keys()][0];if(started(r)){finish(r,'cancelled','플레이어 연결이 끊겨 게임이 종료됐어. 같은 방에서 다시 시작할 수 있어!')}else lobby(r)})
 });
 let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.06,(now-last)/1000);last=now;for(const r of rooms.values()){if(r.phase==='meeting'&&now>=r.meeting.ends)finishVote(r);if(r.phase==='play'&&r.blackoutUntil&&now>=r.blackoutUntil){r.blackoutUntil=0;for(const q of r.players.values())q.repairMini=null;io.to(r.code).emit('sabotageNotice',{type:'expired',until:0,message:'💡 전력이 돌아왔어!'});}if(!started(r))continue;for(const p of r.players.values()){if(r.phase==='play'&&Date.now()>=(p.ventingUntil||0)&&!p.repairMini){const v=p.intent||{x:0,y:0},len=Math.hypot(v.x,v.y),dx=len?v.x/Math.max(1,len):0,dy=len?v.y/Math.max(1,len):0,x=p.x+dx*145*dt,y=p.y+dy*145*dt;if(p.room==='outside'){if(!collides(x,p.y))p.x=x;if(!collides(p.x,y))p.y=y}else{p.x=clamp(x,29,380);p.y=clamp(y,38,266)}}emitView(r,p)}}},50);
