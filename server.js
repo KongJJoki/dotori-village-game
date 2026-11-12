@@ -34,20 +34,20 @@ function cleanPlayer(p){return {id:p.id,name:p.name,icon:p.icon,ready:p.ready,al
 function lobby(room){io.to(room.code).emit('lobby',{code:room.code,host:room.host,phase:room.phase,players:[...room.players.values()].map(cleanPlayer)})}
 function started(room){return room.phase==='play'||room.phase==='meeting'}
 function win(room){if(room.phase==='end')return;const citizen=[...room.players.values()].filter(p=>p.alive&&!p.mafia).length,mafia=[...room.players.values()].filter(p=>p.alive&&p.mafia).length;if(mafia===0)finish(room,'citizens','마피아가 추방됐어!');else if(citizen<=mafia)finish(room,'mafia','마피아 수가 생존 시민 수 이상이야!');else if(room.completed>=room.total)finish(room,'citizens','모든 시민 미션 완료!')}
-function finish(room,winner,reason){room.phase='end';room.meeting=null;room.blackoutUntil=0;io.to(room.code).emit('ended',{winner,reason,mafia:[...room.players.values()].filter(p=>p.mafia).map(p=>p.name).join(', ')||'알 수 없음'});lobby(room)}
+function finish(room,winner,reason){room.phase='end';room.meeting=null;room.blackoutUntil=0;for(const p of room.players.values())p.repairMini=null;io.to(room.code).emit('ended',{winner,reason,mafia:[...room.players.values()].filter(p=>p.mafia).map(p=>p.name).join(', ')||'알 수 없음'});lobby(room)}
 function prepareRematch(room){
  if(room.phase!=='end')return;
  room.phase='lobby';
- room.completed=0;room.total=0;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=0;room.startedAt=null;
+ room.completed=0;room.total=0;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=0;room.repairRound=0;room.repairers=new Set();room.startedAt=null;
  for(const p of room.players.values()){
   p.ready=false;p.alive=true;p.knownDead=false;p.mafia=false;
   p.jobs=[];p.done=[];p.mini=null;p.meetingUsed=false;
-  p.intent={x:0,y:0};p.nextKill=0;p.nextVent=0;p.room='outside';
+  p.intent={x:0,y:0};p.nextKill=0;p.nextVent=0;p.ventingUntil=0;p.repairMini=null;p.room='outside';
  }
  io.to(room.code).emit('rematchReady');
  lobby(room);
 }
-function start(room){if(room.phase!=='lobby'||room.players.size<MIN_PLAYERS||room.players.size>MAX_PLAYERS||[...room.players.values()].some(p=>!p.ready))return;room.phase='play';room.completed=0;room.total=(room.players.size-mafiaCount(room.players.size))*4;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=Date.now()+20000;room.startedAt=Date.now();const arr=shuffled([...room.players.values()]);arr.forEach((p,i)=>{const position=spawn(i,arr.length);p.x=position.x;p.y=position.y;p.room='outside';p.alive=true;p.knownDead=false;p.mafia=i<mafiaCount(arr.length);p.jobs=shuffled(TASKS.map((_,i)=>i)).slice(0,4);p.done=[];p.nextKill=Date.now()+12000;p.nextVent=0;p.meetingUsed=false;p.intent={x:0,y:0};p.lastMove=Date.now();p.mini=null;p.ready=false});for(const p of room.players.values())io.to(p.id).emit('started',{me:{id:p.id,mafia:p.mafia,jobs:p.jobs},total:room.total});lobby(room)}
+function start(room){if(room.phase!=='lobby'||room.players.size<MIN_PLAYERS||room.players.size>MAX_PLAYERS||[...room.players.values()].some(p=>!p.ready))return;room.phase='play';room.completed=0;room.total=(room.players.size-mafiaCount(room.players.size))*4;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=Date.now()+20000;room.repairRound=0;room.repairers=new Set();room.startedAt=Date.now();const arr=shuffled([...room.players.values()]);arr.forEach((p,i)=>{const position=spawn(i,arr.length);p.x=position.x;p.y=position.y;p.room='outside';p.alive=true;p.knownDead=false;p.mafia=i<mafiaCount(arr.length);p.jobs=shuffled(TASKS.map((_,i)=>i)).slice(0,4);p.done=[];p.nextKill=Date.now()+12000;p.nextVent=0;p.ventingUntil=0;p.repairMini=null;p.meetingUsed=false;p.intent={x:0,y:0};p.lastMove=Date.now();p.mini=null;p.ready=false});for(const p of room.players.values())io.to(p.id).emit('started',{me:{id:p.id,mafia:p.mafia,jobs:p.jobs},total:room.total});lobby(room)}
 function voteStatus(room){
  if(room.phase!=='meeting'||!room.meeting)return;
  const alive=[...room.players.values()].filter(p=>p.alive);
@@ -56,41 +56,78 @@ function voteStatus(room){
  const voted=room.meeting.votes.size;
  io.to(room.code).emit('voteStatus',{voted,total:alive.length,remaining:alive.length-voted,tally:[...alive.map(p=>({id:p.id,name:p.name,count:totals.get(p.id)||0})),{id:'skip',name:'건너뛰기',count:totals.get('skip')||0}]});
 }
-function startMeeting(room,reason,bodyId){room.blackoutUntil=0;room.phase='meeting';room.bodies=[];room.meeting={voteStarts:Date.now()+60000,ends:Date.now()+105000,votes:new Map(),quickVotes:new Set(),reason};if(bodyId){const p=room.players.get(bodyId);if(p)p.knownDead=true}for(const p of room.players.values())p.intent={x:0,y:0};io.to(room.code).emit('meeting',{reason,ends:room.meeting.ends,voteStarts:room.meeting.voteStarts,quickCount:0,quickTotal:[...room.players.values()].filter(p=>p.alive).length,players:[...room.players.values()].filter(p=>p.alive).map(p=>({id:p.id,name:p.name,icon:p.icon}))});lobby(room);voteStatus(room)}
+function startMeeting(room,reason,bodyId){room.blackoutUntil=0;room.phase='meeting';for(const p of room.players.values())p.repairMini=null;room.bodies=[];room.meeting={voteStarts:Date.now()+60000,ends:Date.now()+105000,votes:new Map(),quickVotes:new Set(),reason};if(bodyId){const p=room.players.get(bodyId);if(p)p.knownDead=true}for(const p of room.players.values())p.intent={x:0,y:0};io.to(room.code).emit('meeting',{reason,ends:room.meeting.ends,voteStarts:room.meeting.voteStarts,quickCount:0,quickTotal:[...room.players.values()].filter(p=>p.alive).length,players:[...room.players.values()].filter(p=>p.alive).map(p=>({id:p.id,name:p.name,icon:p.icon}))});lobby(room);voteStatus(room)}
 function finishVote(room){if(room.phase!=='meeting'||!room.meeting)return;const votes=[...room.players.values()].filter(p=>p.alive).map(p=>room.meeting.votes.get(p.id)||'skip');let count=new Map();for(const v of votes)count.set(v,(count.get(v)||0)+1);const sorted=[...count].sort((a,b)=>b[1]-a[1]);let kicked=null;if(sorted.length&&sorted[0][0]!=='skip'&&(sorted.length===1||sorted[0][1]>sorted[1][1])){kicked=room.players.get(sorted[0][0]);if(kicked){kicked.alive=false;kicked.knownDead=true}}room.phase='play';room.meeting=null;for(const p of room.players.values()){p.nextKill=Date.now()+24000;p.intent={x:0,y:0}}io.to(room.code).emit('voteResult',{kicked:kicked?.name||null,tally:[...count].map(([id,votes])=>({name:id==='skip'?'건너뛰기':room.players.get(id)?.name||'알 수 없음',votes}))});win(room);lobby(room)}
-function emitView(room,p){const same=q=>q.room===p.room&&dist(q,p)<=172;const people=[...room.players.values()].filter(q=>q.id===p.id||(q.alive&&same(q))).map(q=>({id:q.id,name:q.name,icon:q.icon,x:q.x,y:q.y,room:q.room,ghost:!q.alive}));const bodies=room.bodies.filter(b=>b.room===p.room&&dist(b,p)<=172).map(b=>({...b}));io.to(p.id).emit('view',{me:{id:p.id,x:p.x,y:p.y,room:p.room,alive:p.alive,mafia:p.mafia,done:p.done,jobs:p.jobs,killCD:p.mafia?Math.max(0,Math.ceil((p.nextKill-Date.now())/1000)):null,meetingUsed:p.meetingUsed,ventCD:p.mafia?Math.max(0,Math.ceil(((p.nextVent||0)-Date.now())/1000)):null,sabotageCD:p.mafia?Math.max(0,Math.ceil(((room.nextSabotage||0)-Date.now())/1000)):null},people,bodies,blackoutUntil:room.blackoutUntil||0,roster:[...room.players.values()].map(cleanPlayer),completed:room.completed,total:room.total,phase:room.phase,seconds:Math.floor((Date.now()-room.startedAt)/1000)})}
+function repairRequired(room){const size=room.players.size;return size<=4?1:size<=8?2:3}
+function repairProgress(room){
+ io.to(room.code).emit('repairProgress',{completed:room.repairers?.size||0,required:repairRequired(room),until:room.blackoutUntil||0});
+}
+function emitView(room,p){const same=q=>q.room===p.room&&dist(q,p)<=172;const people=[...room.players.values()].filter(q=>q.id===p.id||(q.alive&&same(q))).map(q=>({id:q.id,name:q.name,icon:q.icon,x:q.x,y:q.y,room:q.room,ghost:!q.alive}));const bodies=room.bodies.filter(b=>b.room===p.room&&dist(b,p)<=172).map(b=>({...b}));io.to(p.id).emit('view',{me:{id:p.id,x:p.x,y:p.y,room:p.room,alive:p.alive,mafia:p.mafia,done:p.done,jobs:p.jobs,killCD:p.mafia?Math.max(0,Math.ceil((p.nextKill-Date.now())/1000)):null,meetingUsed:p.meetingUsed,ventCD:p.mafia?Math.max(0,Math.ceil(((p.nextVent||0)-Date.now())/1000)):null,sabotageCD:p.mafia?Math.max(0,Math.ceil(((room.nextSabotage||0)-Date.now())/1000)):null},people,bodies,blackoutUntil:room.blackoutUntil||0,repairCompleted:room.repairers?.size||0,repairRequired:repairRequired(room),repairAlreadyDone:!!room.repairers?.has(p.id),roster:[...room.players.values()].map(cleanPlayer),completed:room.completed,total:room.total,phase:room.phase,seconds:Math.floor((Date.now()-room.startedAt)/1000)})}
 io.on('connection',socket=>{
  socket.on('create',({name,icon}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');const c=code(),room={code:c,host:socket.id,phase:'lobby',players:new Map(),bodies:[],completed:0,meeting:null};rooms.set(c,room);socket.data.room=c;socket.join(c);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});lobby(room)});
  socket.on('join',({name,icon,code:c}={})=>{if(socket.data.room)return reply(socket,'이미 방에 참가했어.');const room=rooms.get(String(c||'').trim().toUpperCase());if(!room||room.phase!=='lobby'||room.players.size>=MAX_PLAYERS)return reply(socket,'방 코드가 틀렸거나 입장할 수 없는 방이야.');name=String(name||'').trim().slice(0,12);if(!name)return reply(socket,'닉네임을 입력해줘.');if(nameTaken(room,name))return reply(socket,'이미 사용 중인 닉네임이야. 다른 이름을 골라줘!');socket.data.room=room.code;socket.join(room.code);room.players.set(socket.id,{id:socket.id,name,icon:clamp(Number(icon)||0,0,AVATAR_COUNT-1),ready:false,alive:true,knownDead:false});lobby(room)});
  socket.on('ready',()=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='lobby')return;p.ready=!p.ready;lobby(r)});
  socket.on('start',()=>{const r=getRoom(socket);if(!r||r.host!==socket.id)return;start(r)});
  socket.on('rematch',()=>{const r=getRoom(socket);if(!r||r.phase!=='end'||r.host!==socket.id)return;prepareRematch(r)});
- socket.on('move',v=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='play'||!v)return;p.intent={x:clamp(Number(v.x)||0,-1,1),y:clamp(Number(v.y)||0,-1,1)}});
+ socket.on('move',v=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='play'||!v||Date.now()<(p.ventingUntil||0)||p.repairMini)return;p.intent={x:clamp(Number(v.x)||0,-1,1),y:clamp(Number(v.y)||0,-1,1)}});
  socket.on('enter',()=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||r.phase!=='play')return;if(p.room!=='outside'){if(dist(p,{x:205,y:274})>=48)return;const b=BUILDINGS.find(b=>b.id===p.room),pos=safeExit(b);p.x=pos.x;p.y=pos.y;p.room='outside'}else{const b=BUILDINGS.find(b=>dist(p,{x:b.doorX,y:b.doorY})<47);if(!b)return;p.room=b.id;p.x=205;p.y=242}p.intent={x:0,y:0};emitView(r,p)});
  socket.on('vent',()=>{
-  const room=getRoom(socket),p=room?.players.get(socket.id);
-  if(!room||room.phase!=='play'||!p||!p.alive||!p.mafia||Date.now()<(p.nextVent||0))return;
+  const room=getRoom(socket),p=room?.players.get(socket.id),now=Date.now();
+  if(!room||room.phase!=='play'||!p||!p.alive||!p.mafia||now<(p.nextVent||0)||now<(p.ventingUntil||0))return;
   const current=VENTS.findIndex(v=>v.room===p.room&&dist(p,v)<=46);
   if(current<0)return reply(socket,'벤트 입구 가까이에서 사용해 줘!');
-  const dest=VENTS[(current+1)%VENTS.length];
-  p.room=dest.room;p.x=dest.x;p.y=dest.y+28;p.intent={x:0,y:0};p.nextVent=Date.now()+8000;
-  socket.emit('notice','🕳️ 벤트로 다른 장소에 이동했어!');
-  emitView(room,p);
+  const from=VENTS[current],to=VENTS[(current+1)%VENTS.length],round=room.startedAt;
+  const token=now;
+  p.ventingUntil=now+1200;p.ventToken=token;p.intent={x:0,y:0};p.nextVent=now+8000;p.repairMini=null;
+  io.to(room.code).emit('ventTravel',{id:p.id,icon:p.icon,name:p.name,from,to,startedAt:now,duration:1200});
+  setTimeout(()=>{
+   if(room.phase!=='play'||room.startedAt!==round||room.players.get(p.id)!==p||!p.alive||p.ventToken!==token)return;
+   p.room=to.room;p.x=to.x;p.y=to.y+25;p.intent={x:0,y:0};
+   io.to(room.code).emit('ventArrive',{id:p.id,room:to.room});
+   emitView(room,p);
+  },540);
  });
  socket.on('sabotage',()=>{
   const room=getRoom(socket),p=room?.players.get(socket.id),now=Date.now();
   if(!room||room.phase!=='play'||!p||!p.alive||!p.mafia)return;
   if(now<(room.nextSabotage||0))return reply(socket,'사보타지 쿨타임이야!');
   if(now<(room.blackoutUntil||0))return;
-  room.blackoutUntil=now+40000;room.nextSabotage=now+90000;
-  io.to(room.code).emit('sabotageNotice',{type:'blackout',until:room.blackoutUntil,message:'⚡ 정전! 시야가 좁아졌어. 야외 발전기를 수리해 줘!'});
+  room.blackoutUntil=now+75000;room.nextSabotage=now+110000;
+  room.repairRound=(room.repairRound||0)+1;room.repairers=new Set();
+  for(const q of room.players.values())q.repairMini=null;
+  io.to(room.code).emit('sabotageNotice',{type:'blackout',until:room.blackoutUntil,message:'⚡ 정전! 발전기에서 배선을 복구해 줘!'});
+  repairProgress(room);
  });
  socket.on('repair',()=>{
   const room=getRoom(socket),p=room?.players.get(socket.id);
   if(!room||room.phase!=='play'||!p||!p.alive||p.mafia||Date.now()>=(room.blackoutUntil||0))return;
-  if(p.room!=='outside'||dist(p,{x:530,y:320})>52)return reply(socket,'야외 발전기 가까이 가서 수리해 줘!');
-  room.blackoutUntil=0;
-  io.to(room.code).emit('sabotageNotice',{type:'repaired',until:0,message:'💡 발전기 수리 완료! 불이 돌아왔어.'});
+  if(p.room!=='outside'||dist(p,{x:530,y:320})>55)return reply(socket,'야외 발전기 가까이 가서 수리해 줘!');
+  if(room.repairers?.has(p.id))return reply(socket,'이미 수리에 성공했어! 다른 시민을 도와줘.');
+  if(p.repairMini&&p.repairMini.round===room.repairRound)return socket.emit('repairMini',{seq:p.repairMini.seq,pos:p.repairMini.pos});
+  const seq=[0,1,2,3].sort(()=>Math.random()-.5);
+  p.repairMini={seq,pos:0,round:room.repairRound};p.intent={x:0,y:0};
+  socket.emit('repairMini',{seq,pos:0});
+ });
+ socket.on('repairStep',({index}={})=>{
+  const room=getRoom(socket),p=room?.players.get(socket.id),m=p?.repairMini;
+  if(!room||room.phase!=='play'||!p||!p.alive||p.mafia||!m||m.round!==room.repairRound||
+     Date.now()>=(room.blackoutUntil||0)||p.room!=='outside'||dist(p,{x:530,y:320})>55)return;
+  if(!Number.isInteger(index)||index<0||index>3)return;
+  if(index!==m.seq[m.pos]){m.pos=0;socket.emit('repairWrong');return;}
+  m.pos++;
+  if(m.pos<m.seq.length){socket.emit('repairNext',{pos:m.pos});return;}
+  p.repairMini=null;room.repairers.add(p.id);
+  socket.emit('repairDone');
+  repairProgress(room);
+  if(room.repairers.size>=repairRequired(room)){
+   room.blackoutUntil=0;
+   for(const q of room.players.values())q.repairMini=null;
+   io.to(room.code).emit('sabotageNotice',{type:'repaired',until:0,message:'💡 시민들이 발전기를 복구했어!'});
+  }
+ });
+ socket.on('repairCancel',()=>{
+  const room=getRoom(socket),p=room?.players.get(socket.id);
+  if(p)p.repairMini=null;
  });
  socket.on('taskOpen',({id}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id),t=TASKS[id];if(!p||r.phase!=='play'||!t||!p.jobs.includes(id)||p.done.includes(id)||p.room!==t.room||dist(p,t)>44)return;const seq=Array.from({length:3},()=>Math.floor(Math.random()*3));p.mini={id,seq,pos:0,start:Date.now()};socket.emit('mini',{id,seq})});
  socket.on('taskStep',({n}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id),m=p?.mini;if(!p||r.phase!=='play'||!m)return;if(m.seq[m.pos]!==n){socket.emit('miniWrong');return}m.pos++;if(m.pos<3){socket.emit('miniNext',{pos:m.pos});return}if(!p.done.includes(m.id)){p.done.push(m.id);if(!p.mafia)r.completed++}p.mini=null;socket.emit('miniDone',{fake:p.mafia});win(r)});
@@ -112,5 +149,5 @@ io.on('connection',socket=>{
  socket.on('chat',({message}={})=>{const r=getRoom(socket),p=r?.players.get(socket.id);if(!p||!started(r)||!p.alive)return;const msg=String(message||'').trim().slice(0,120);if(!msg)return;const now=Date.now();if(now-(p.lastChat||0)<450)return;p.lastChat=now;for(const q of r.players.values()){if(r.phase==='meeting'?true:q.alive&&q.room===p.room&&dist(p,q)<=172)io.to(q.id).emit('chat',{name:p.name,message:msg,meeting:r.phase==='meeting'})}});
  socket.on('disconnect',()=>{const r=getRoom(socket);if(!r)return;r.players.delete(socket.id);socket.data.room=null;if(!r.players.size){rooms.delete(r.code);return}if(r.host===socket.id)r.host=[...r.players.keys()][0];if(started(r)){finish(r,'cancelled','플레이어 연결이 끊겨 게임이 종료됐어. 같은 방에서 다시 시작할 수 있어!')}else lobby(r)})
 });
-let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.06,(now-last)/1000);last=now;for(const r of rooms.values()){if(r.phase==='meeting'&&now>=r.meeting.ends)finishVote(r);if(!started(r))continue;for(const p of r.players.values()){if(r.phase==='play'){const v=p.intent||{x:0,y:0},len=Math.hypot(v.x,v.y),dx=len?v.x/Math.max(1,len):0,dy=len?v.y/Math.max(1,len):0,x=p.x+dx*145*dt,y=p.y+dy*145*dt;if(p.room==='outside'){if(!collides(x,p.y))p.x=x;if(!collides(p.x,y))p.y=y}else{p.x=clamp(x,29,380);p.y=clamp(y,38,266)}}emitView(r,p)}}},50);
+let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.06,(now-last)/1000);last=now;for(const r of rooms.values()){if(r.phase==='meeting'&&now>=r.meeting.ends)finishVote(r);if(r.phase==='play'&&r.blackoutUntil&&now>=r.blackoutUntil){r.blackoutUntil=0;for(const q of r.players.values())q.repairMini=null;io.to(r.code).emit('sabotageNotice',{type:'expired',until:0,message:'💡 전력이 돌아왔어!'});}if(!started(r))continue;for(const p of r.players.values()){if(r.phase==='play'&&Date.now()>=(p.ventingUntil||0)&&!p.repairMini){const v=p.intent||{x:0,y:0},len=Math.hypot(v.x,v.y),dx=len?v.x/Math.max(1,len):0,dy=len?v.y/Math.max(1,len):0,x=p.x+dx*145*dt,y=p.y+dy*145*dt;if(p.room==='outside'){if(!collides(x,p.y))p.x=x;if(!collides(p.x,y))p.y=y}else{p.x=clamp(x,29,380);p.y=clamp(y,38,266)}}emitView(r,p)}}},50);
 const PORT=Number(process.env.PORT||3000);server.listen(PORT,'0.0.0.0',()=>console.log(`🌰 도토리 마을: http://localhost:${PORT}`));

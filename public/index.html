@@ -28,9 +28,9 @@ h1{letter-spacing:-1px;text-shadow:1px 2px #fff}.where{border:2px solid #bda681}
 .vote-tallies .leading{outline:2px solid #d3ae60;background:#fff0c5}
 #myVote{font-weight:800;color:#2f764b;font-size:13px;margin:7px 0}
 @media(max-width:460px){.vote-tallies{grid-template-columns:1fr}}
-.sabotage-banner{margin:8px 0;border:2px solid #ba6868;border-radius:9px;padding:10px;background:#ffe1df;color:#973a3a;font-weight:800;text-align:center}#sabotage{background:#db8986;color:#fff}#vent{background:#788396;color:#fff}#repair{background:#e7c46f}</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 멀티플레이 v1.7 · 사보타지 & 벤트</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div id="sabotageBanner" class="sabotage-banner" style="display:none">⚡ 정전 발생!</div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button><button id="sabotage" style="display:none">⚡ 정전 사보타지</button><button id="vent" style="display:none">🕳️ 벤트 (V)</button><button id="repair" style="display:none">🔧 발전기 수리</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
+.sabotage-banner{margin:8px 0;border:2px solid #ba6868;border-radius:9px;padding:10px;background:#ffe1df;color:#973a3a;font-weight:800;text-align:center}#sabotage{background:#db8986;color:#fff}#vent{background:#788396;color:#fff}#repair{background:#e7c46f}.vent-transit-banner{margin:7px 0;padding:10px;background:#374258;color:#f9f0db;text-align:center;font-weight:850;border-radius:10px;border:3px solid #77869e;letter-spacing:1px;animation:ventFlash .24s ease-in-out infinite alternate}@keyframes ventFlash{from{opacity:1}to{opacity:.7}}.repair-panel{background:#f5edd8;padding:14px;border:2px solid #c5a879;border-radius:14px;text-align:center}.repair-sequence{display:flex;justify-content:center;gap:10px;align-items:center;font-size:14px;font-weight:800;margin:10px 0}.repair-wire-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px auto}.repair-wire-grid button{min-height:65px;border:3px solid #a19a8b;font-size:25px;box-shadow:0 4px 0 #877e75}.repair-wire-grid button:disabled{opacity:.5}.repair-progress-track{height:12px;background:#e0d4bc;border-radius:10px;overflow:hidden;margin:8px 0}.repair-progress-track>div{height:100%;background:#69a981;transition:width .2s}.vent-floor-label{font-size:12px;color:#e2cfad;font-weight:800}</style></head><body><main class="wrap"><header class="head"><div><h1>🌰 수상한 도토리 마을</h1><span class="sub">실시간 멀티플레이 v1.8 · 배선 수리 & 벤트 연출</span></div><div><span class="pill" id="role">🐾 대기 중</span> <span class="pill" id="timer">00:00</span> <span class="onlineStatus" id="net">연결 중...</span></div></header><div class="layout"><section class="gamepane"><div class="screen"><canvas id="game" width="800" height="600"></canvas><span class="where" id="where">🌳 야외</span><div class="toast hidden" id="toast"></div></div><div id="sabotageBanner" class="sabotage-banner" style="display:none">⚡ 정전 발생!</div><div id="ventTransitBanner" class="vent-transit-banner" style="display:none">🕳️ 벤트 이동 중...</div><div class="bar"><b>🌰 시민 미션</b><div class="track"><div id="fill"></div></div><b id="progress">0 / 12</b></div><div class="controls"><button class="primary" id="action">E · 상호작용</button><button class="danger" id="attack">F · 습격</button><button id="report">R · 신고</button><button id="emergency">📣 긴급회의</button><button id="sabotage" style="display:none">⚡ 정전 사보타지</button><button id="vent" style="display:none">🕳️ 벤트 (V)</button><button id="repair" style="display:none">🔧 배선 수리 미니게임</button></div><p class="hint footer">WASD / 방향키 이동 · 문 근처 E 출입 · 미션 표식 E · 마피아 F · 신고 R · Enter 채팅</p></section><aside class="side"><section class="panel"><h2>🐾 주민</h2><div id="roster"></div><p class="hint">직업은 게임이 끝날 때 공개돼요.</p></section><section class="panel"><h2>📜 내 미션</h2><div id="tasks"></div></section><section class="panel"><h2>💬 텍스트 채팅</h2><div class="chatlog" id="chat"></div><form class="chatinput" id="chatForm"><input id="message" maxlength="120" placeholder="Enter로 채팅하기"><button>보내기</button></form><p class="hint">플레이 중엔 같은 공간·가까운 사람끼리, 회의 중엔 생존자 전체가 대화해요.</p></section></aside></div></main><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div><script src="/socket.io/socket.io.js"></script><script>
 (()=>{'use strict';
-const socket=io();let roomCode='',selfId='',host='',lobbyData=null,mode='menu',keys={},players=[],me=null,bodies=[],taskItems=[],progress=0,total=12,notice=0,meetingEnds=0,voteStarts=0,quickCount=0,quickTotal=0,quickPressed=false,lastEnded=null,myVotedId=null,votePending=false,meetingCandidates=[],voteReport=null,blackoutUntil=0,ventCD=0,sabotageCD=0,miniState=null,taskDone=[],killCD=12,roster=[];
+const socket=io();let roomCode='',selfId='',host='',lobbyData=null,mode='menu',keys={},players=[],me=null,bodies=[],taskItems=[],progress=0,total=12,notice=0,meetingEnds=0,voteStarts=0,quickCount=0,quickTotal=0,quickPressed=false,lastEnded=null,myVotedId=null,votePending=false,meetingCandidates=[],voteReport=null,blackoutUntil=0,ventCD=0,sabotageCD=0,repairCompleted=0,repairNeeded=1,repairAlreadyDone=false,repairGame=null,ventTravelMap=new Map(),miniState=null,taskDone=[],killCD=12,roster=[];
 const C=document.getElementById('game'),g=C.getContext('2d');g.imageSmoothingEnabled=true;
 const $=id=>document.getElementById(id),CW=800,CH=600,MW=1000,MH=730,VIEW=172;
 const VENTS=[{room:'outside',x:470,y:480},{room:'bakery',x:205,y:155},{room:'storage',x:205,y:155},{room:'windmill',x:205,y:155}];
@@ -57,12 +57,12 @@ function syncUI(){if(!me)return;$('role').textContent=me.mafia?'🦊 마피아 (
  const nearby=VENTS.some(v=>v.room===me.room&&dist(v,me)<=46);
  $('vent').style.display=me.mafia?'':'none';$('vent').disabled=!active||!nearby||ventCD>0;
  $('vent').textContent='🕳️ 벤트 V ('+ventCD+'초)';
- const canRepair=active&&!me.mafia&&blackoutUntil>Date.now()&&me.room==='outside'&&dist(me,GENERATOR)<=52;
+ const canRepair=active&&!me.mafia&&!repairAlreadyDone&&blackoutUntil>Date.now()&&me.room==='outside'&&dist(me,GENERATOR)<=52;
  $('repair').style.display=active&&!me.mafia&&blackoutUntil>Date.now()?'':'none';
- $('repair').disabled=!canRepair;
+ $('repair').disabled=!canRepair;$('repair').textContent=repairAlreadyDone?'✅ 내 수리 완료':'🔧 배선 수리 ('+repairCompleted+'/'+repairNeeded+'명)';
  const remain=Math.max(0,Math.ceil((blackoutUntil-Date.now())/1000));
  $('sabotageBanner').style.display=blackoutUntil>Date.now()?'':'none';
- $('sabotageBanner').textContent='⚡ 정전! '+remain+'초 · 야외 발전기에서 수리 가능';
+ $('sabotageBanner').textContent='⚡ 정전 '+remain+'초 · 수리 '+repairCompleted+'/'+repairNeeded+'명 완료 · 야외 발전기로 이동!';
 }
 function R(x,y,w,h,c){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
 function circle(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill()}
@@ -156,9 +156,13 @@ function sprite(p){
  if(p.id===selfId){R(x-22,y+24,44,3,'#fff3bc');R(x-22,y+21,4,5,'#fff3bc');R(x+18,y+21,4,5,'#fff3bc');}
  text(p.name,x,y-53-bob,'#5c4a3c',12)
 }
-function stage(){if(!me)return;const isOut=me.room==='outside';g.save();if(isOut){const zoom=1.52;g.translate(CW/2-me.x*zoom,CH/2-me.y*zoom);g.scale(zoom,zoom);outdoor()}else{const zoom=1.68;g.translate(CW/2-205*zoom,CH/2-150*zoom);g.scale(zoom,zoom);indoor(me.room)}const now=performance.now()/330;for(const t of taskItems){if(t.room!==me.room||!myTask(t))continue;circle(t.x,t.y,11+Math.sin(now+t.id)*2,'#ffe3a0');circle(t.x,t.y,5,'#dc9955');text('!',t.x,t.y+5,'#6f4f2b',14)}if(me.mafia){for(const v of VENTS){if(v.room!==me.room)continue;circle(v.x,v.y,17,'#343c58');circle(v.x,v.y,11,'#66728e');text('🕳️ V',v.x,v.y-24,'#fff6d4',14)}}
+function stage(){if(!me)return;const isOut=me.room==='outside';g.save();if(isOut){const zoom=1.52;g.translate(CW/2-me.x*zoom,CH/2-me.y*zoom);g.scale(zoom,zoom);outdoor()}else{const zoom=1.68;g.translate(CW/2-205*zoom,CH/2-150*zoom);g.scale(zoom,zoom);indoor(me.room)}const now=performance.now()/330;for(const t of taskItems){if(t.room!==me.room||!myTask(t))continue;circle(t.x,t.y,11+Math.sin(now+t.id)*2,'#ffe3a0');circle(t.x,t.y,5,'#dc9955');text('!',t.x,t.y+5,'#6f4f2b',14)}for(const v of VENTS){
+ if(v.room!==me.room)continue;
+ const tr=[...ventTravelMap.values()].find(t=>(t.from.room===v.room&&t.from.x===v.x&&Date.now()-t.startedAt<570)||(t.to.room===v.room&&t.to.x===v.x&&Date.now()-t.startedAt>=570&&Date.now()-t.startedAt<1200));
+ drawVentCover(v,!!tr,!!(me.mafia&&dist(v,me)<85));
+}
 if(me.room==='outside'){circle(GENERATOR.x,GENERATOR.y,17,blackoutUntil>Date.now()?'#e48679':'#799d69');text('⚡',GENERATOR.x,GENERATOR.y+6,'#fffce0',21);if(blackoutUntil>Date.now())text('🔧 수리',GENERATOR.x,GENERATOR.y-24,'#fce2b7',12)}
-for(const b of bodies){if(!bodiesVisible(b))continue;circle(b.x,b.y+8,16,'#927b80');text('💤',b.x,b.y+4,'#fff',22);text('R 신고',b.x,b.y-24,'#a45556',12)}for(const p of players.slice().sort((a,b)=>a.y-b.y)){if(!playerVisible(p))continue;sprite(p)}g.restore();if(blackoutUntil>Date.now()){const dark=g.createRadialGradient(CW/2,CH/2,18,CW/2,CH/2,me.mafia?155:95);dark.addColorStop(0,'rgba(5,14,18,.06)');dark.addColorStop(1,'rgba(5,14,18,.86)');g.fillStyle=dark;g.fillRect(0,0,CW,CH)} // sight is a true circular field centered on player; outside is dark and never shows players or bodies.
+for(const b of bodies){if(!bodiesVisible(b))continue;circle(b.x,b.y+8,16,'#927b80');text('💤',b.x,b.y+4,'#fff',22);text('R 신고',b.x,b.y-24,'#a45556',12)}for(const p of players.slice().sort((a,b)=>a.y-b.y)){if(!playerVisible(p))continue;if(ventTravelMap.has(p.id)&&Date.now()-ventTravelMap.get(p.id).startedAt<1200)continue;sprite(p)}renderVentEffects();g.restore();if(blackoutUntil>Date.now()){const dark=g.createRadialGradient(CW/2,CH/2,18,CW/2,CH/2,me.mafia?155:95);dark.addColorStop(0,'rgba(5,14,18,.06)');dark.addColorStop(1,'rgba(5,14,18,.86)');g.fillStyle=dark;g.fillRect(0,0,CW,CH)} // sight is a true circular field centered on player; outside is dark and never shows players or bodies.
 const gradient=g.createRadialGradient(CW/2,CH/2,VIEW*1.52*.58,CW/2,CH/2,VIEW*1.52*1.18);gradient.addColorStop(0,'rgba(14,31,25,0)');gradient.addColorStop(.76,'rgba(14,31,25,.18)');gradient.addColorStop(1,'rgba(14,31,25,.95)');if(isOut){g.fillStyle=gradient;g.fillRect(0,0,CW,CH)}else{const indoorShade=g.createRadialGradient(CW/2,CH/2,165,CW/2,CH/2,330);indoorShade.addColorStop(0,'rgba(0,0,0,0)');indoorShade.addColorStop(1,'rgba(31,29,23,.34)');g.fillStyle=indoorShade;g.fillRect(0,0,CW,CH)}}
 let chosen=0;const animals=ANIMALS.map(a=>a.emoji);function avatarHTML(i,small=false){const a=ANIMALS[i]||ANIMALS[0];return '<span class="avatar-thumb'+(small?' lobby-avatar':'')+'" style="background-image:url('+a.file+')"></span>'}
 function welcome(){mode='menu';show(`<h2>🌰 도토리 마을 입장</h2><p class="hint">친구들이 같은 주소로 접속해서 닉네임을 정하고 방 코드로 모여 보자! (3~12명)</p><label>닉네임</label><input id="nick" maxlength="12" placeholder="예: 콩쪽이" autocomplete="off"><p class="hint">내 캐릭터 선택</p><div class="selectrow" id="animalSelect"></div><div class="buttons"><button class="primary" id="create">🏠 새 방 만들기</button></div><p class="hint">또는 친구의 방 코드로 입장</p><input id="codeInput" maxlength="6" placeholder="6자리 방 코드"><div class="buttons"><button id="join">🔑 코드로 입장</button></div><p id="err" class="hint"></p>`);const options=$('animalSelect');animals.forEach((a,i)=>{const b=document.createElement('button');b.innerHTML=avatarHTML(i)+'<span>'+esc(ANIMALS[i].name)+'</span>';b.className=i===chosen?'active':'';b.onclick=()=>{chosen=i;[...options.children].forEach(x=>x.classList.remove('active'));b.classList.add('active')};options.appendChild(b)});const nick=()=>$('nick').value.trim();$('create').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('create',{name:nick(),icon:chosen})};$('join').onclick=()=>{if(!nick())return $('err').textContent='닉네임을 입력해줘!';socket.emit('join',{name:nick(),icon:chosen,code:$('codeInput').value.trim()})};$('codeInput').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase())}
@@ -182,7 +186,68 @@ function endUI(){
  };
 }
 function lobbyUI(){if(!lobbyData||lobbyData.phase!=='lobby')return;mode='lobby';const people=lobbyData.players;const isHost=lobbyData.host===socket.id;show(`<div class="center"><h2>🌰 대기실 (${people.length}/12)</h2><p>친구에게 방 코드를 알려줘!</p><div class="code">${esc(lobbyData.code)}</div><button id="copy">📋 코드 복사</button></div><div class="lobbylist">${people.map(p=>`<div><span>${avatarHTML(p.icon,true)} ${esc(p.name)} ${p.id===socket.id?'(나)':''}${p.id===lobbyData.host?' 👑':''}</span><b>${p.ready?'✅ 준비':'⌛ 대기'}</b></div>`).join('')}</div><div class="buttons"><button id="ready">${people.find(p=>p.id===socket.id)?.ready?'준비 취소':'✅ 준비하기'}</button>${isHost?'<button class="primary" id="begin" '+(people.length>=3&&people.length<=12&&people.every(p=>p.ready)?'':'disabled')+'>🎮 게임 시작</button>':''}</div><p class="hint">3명 이상 모두 준비하면 방장이 시작할 수 있어. 3~6명은 마피아 1명, 7~10명은 2명, 11~12명은 3명이야.</p>`);$('copy').onclick=()=>{navigator.clipboard?.writeText(lobbyData.code).then(()=>toast('방 코드를 복사했어!')).catch(()=>toast('화면의 코드를 친구에게 알려줘!'))};$('ready').onclick=()=>socket.emit('ready');if($('begin'))$('begin').onclick=()=>socket.emit('start')}
-function interact(){if(mode!=='play'||!me)return;if(!me.mafia&&blackoutUntil>Date.now()&&me.room==='outside'&&dist(me,GENERATOR)<=52){socket.emit('repair');return}if(me.room!=='outside'&&dist(me,{x:205,y:274})<48){socket.emit('enter');keys={};return}if(nearestDoor()){socket.emit('enter');keys={};return}const task=nearTask();if(task){socket.emit('taskOpen',{id:task.id});return}toast('문이나 미션 표식 가까이 가서 E를 눌러봐!')}
+function interact(){if(mode!=='play'||!me)return;if(!me.mafia&&!repairAlreadyDone&&blackoutUntil>Date.now()&&me.room==='outside'&&dist(me,GENERATOR)<=52){socket.emit('repair');return}if(me.room!=='outside'&&dist(me,{x:205,y:274})<48){socket.emit('enter');keys={};return}if(nearestDoor()){socket.emit('enter');keys={};return}const task=nearTask();if(task){socket.emit('taskOpen',{id:task.id});return}toast('문이나 미션 표식 가까이 가서 E를 눌러봐!')}
+function showRepairMini(data){
+ if(!me||!me.alive||me.mafia||!blackoutUntil)return;
+ mode='repair';keys={};repairGame={seq:data.seq,pos:data.pos||0};
+ drawRepairMini();
+}
+function drawRepairMini(){
+ if(!repairGame)return;
+ const colors=['🔴','🟡','🔵','🟢'];
+ const names=['빨강','노랑','파랑','초록'];
+ const seq=repairGame.seq,pos=repairGame.pos;
+ show(`<h2>🔧 발전기 배선 복구</h2><div class="repair-panel">
+ <p>화면에 표시된 색 순서대로 스위치를 눌러줘!</p>
+ <div class="repair-sequence">${seq.map((n,i)=>'<span style="opacity:'+(i<pos?'.3':'1')+'">'+colors[n]+(i===pos?'⬇️':'')+'</span>').join('')}</div>
+ <p class="hint">진행: ${pos} / ${seq.length} · 틀리면 처음부터!</p>
+ <div class="repair-progress-track"><div style="width:${Math.round(pos/seq.length*100)}%"></div></div>
+ <div class="repair-wire-grid">${colors.map((x,i)=>'<button data-wire="'+i+'" aria-label="'+names[i]+' 배선">'+x+'</button>').join('')}</div>
+ <p><b>⚡ 전체 복구: ${repairCompleted} / ${repairNeeded}명</b></p>
+ </div><button id="repairClose">수리 나가기</button>`);
+ document.querySelectorAll('[data-wire]').forEach(b=>b.onclick=()=>{socket.emit('repairStep',{index:Number(b.dataset.wire)});document.querySelectorAll('[data-wire]').forEach(el=>el.disabled=true)});
+ $('repairClose').onclick=()=>{socket.emit('repairCancel');repairGame=null;mode='play';close()};
+}
+function drawVentCover(v,open,highlight){
+ const x=v.x,y=v.y,w=48,h=34;
+ // Cast-metal cover and visible dark sewer shaft.
+ R(x-w/2-5,y-h/2-5,w+10,h+10,'#3c4046');
+ R(x-w/2-2,y-h/2-2,w+4,h+4,'#a1a4a6');
+ R(x-w/2,y-h/2,w,h,'#1a252f');
+ for(let i=-17;i<=17;i+=9)R(x+i,y-h/2+5,5,h-10,'#536878');
+ for(let i=-19;i<=17;i+=9)R(x+i,y-h/2+7,2,h-14,'#8da0aa');
+ for(const n of [-1,1])circle(x+n*21,y+n*13,2,'#c7bfa8');
+ if(!open){
+  R(x-23,y-17,46,4,'#c4c0af');R(x-23,y+12,46,5,'#596770');
+ }else{
+  // Hinged cover slides up, exposing the dark shaft.
+  R(x-23,y-31,46,10,'#a6adb1');R(x-22,y-33,44,4,'#e0d9bd');
+  circle(x,y,13,'#10131b');
+  for(let n=0;n<3;n++)circle(x-10+n*10,y+5,2,'#7f91a2');
+ }
+ if(highlight){g.strokeStyle='#ffd76c';g.lineWidth=3;g.strokeRect(x-29,y-23,58,46);text('🕳️ V 벤트',x,y-34,'#ffeda6',13)}
+}
+function renderVentEffects(){
+ const now=Date.now();
+ for(const [id,tr] of ventTravelMap){
+  const elapsed=now-tr.startedAt;
+  if(elapsed>1450){ventTravelMap.delete(id);continue}
+  let site=null,open=false,progress=0,entry=false;
+  if(elapsed<570){site=tr.from;open=elapsed>90&&elapsed<570;progress=Math.min(1,elapsed/560);entry=true}
+  else{site=tr.to;open=elapsed<1150;progress=Math.min(1,(elapsed-570)/580)}
+  if(site.room!==me.room)continue;
+  drawVentCover(site,open,false);
+  if(open){
+    // A shrinking / emerging silhouette shows actual entry and exit.
+    const size=entry?1-progress:progress;
+    g.save();g.globalAlpha=.85;g.translate(site.x,site.y-8);
+    g.scale(Math.max(.03,size),Math.max(.03,size));
+    circle(0,-9,12,'#f4edda');circle(-5,-11,2,'#35465a');circle(5,-11,2,'#35465a');
+    g.restore();
+    for(let k=0;k<3;k++)circle(site.x-14+k*14,site.y-20-Math.sin(elapsed/170+k)*8,2,'#e5f0df');
+  }
+ }
+}
 function mini(data){if(mode!=='play')return;mode='mini';miniState={...data,pos:0};keys={};renderMini()}
 function renderMini(){const s=miniState;if(!s)return;const t=TASKS[s.id],icons=['🌰','🍞','🌼'];show(`<h2>${t.icon} ${esc(t.name)}</h2><p class="hint">순서대로 같은 그림을 눌러 미션을 완료해!</p><div class="center"><b>${s.pos+1}/3 · ${icons[s.seq[s.pos]]}</b></div><div class="mini">${icons.map((e,i)=>`<button data-mini="${i}">${e}</button>`).join('')}</div><button id="cancel">취소</button>`);document.querySelectorAll('[data-mini]').forEach(b=>b.onclick=()=>socket.emit('taskStep',{n:Number(b.dataset.mini)}));$('cancel').onclick=()=>{socket.emit('taskCancel');miniState=null;mode='play';close()}}
 function updateVoteReport(data){
@@ -250,7 +315,7 @@ socket.on('lobby',data=>{
 });
 socket.on('rematchReady',()=>{
  keys={};mode='lobby';me=null;players=[];bodies=[];roster=[];
- miniState=null;blackoutUntil=0;ventCD=0;sabotageCD=0;taskDone=[];progress=0;total=12;lastEnded=null;
+ miniState=null;blackoutUntil=0;ventCD=0;sabotageCD=0;repairCompleted=0;repairNeeded=1;repairAlreadyDone=false;repairGame=null;ventTravelMap.clear();taskDone=[];progress=0;total=12;lastEnded=null;
  quickPressed=false;votePending=false;myVotedId=null;voteReport=null;
  meetingEnds=0;voteStarts=0;
  $('timer').textContent='00:00';$('role').textContent='🐾 대기 중';$('where').textContent='🌳 야외';
@@ -258,10 +323,29 @@ socket.on('rematchReady',()=>{
  $('chat').innerHTML='';$('message').disabled=false;$('chatForm').querySelector('button').disabled=false;
  toast('🌰 같은 방에서 다시 시작할 준비를 해줘!');
 });
-socket.on('started',data=>{selfId=data.me.id;mode='play';taskItems=TASKS.map((t,id)=>({...t,id}));me={...data.me,x:470,y:380,room:'outside',alive:true,done:[]};taskDone=[];blackoutUntil=0;ventCD=0;sabotageCD=0;total=data.total;progress=0;$('chat').innerHTML='';close();toast(me.mafia?'😈 네가 마피아야! 시민을 습격해!':'🐰 네가 시민이야! 미션을 완료해!');chat('시스템','게임 시작! 건물 문과 미션에 가까이 다가가 E를 눌러봐.')});
-socket.on('view',data=>{if(!selfId||mode==='end')return;const priorRoom=me?.room;me={...data.me,name:lobbyData?.players.find(p=>p.id===selfId)?.name||'나',icon:lobbyData?.players.find(p=>p.id===selfId)?.icon||0};me.ghost=!me.alive;players=data.people.map(p=>({...p,alive:p.id===selfId?me.alive:true}));const i=players.findIndex(p=>p.id===selfId);if(i>=0)players[i]=me;else players.push(me);bodies=data.bodies;progress=data.completed;total=data.total;killCD=data.me.killCD||0;ventCD=data.me.ventCD||0;sabotageCD=data.me.sabotageCD||0;blackoutUntil=data.blackoutUntil||0;taskDone=data.me.done||[];roster=data.roster;const s=data.seconds;$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(priorRoom!==me.room)keys={};if(mode==='play'&&data.phase==='meeting')mode='meeting';const disabled=!me.alive;$('message').disabled=disabled;$('chatForm').querySelector('button').disabled=disabled;$('message').placeholder=disabled?'👻 사망자는 채팅을 보낼 수 없어요':'Enter로 채팅하기';if(mode==='play'&&data.phase==='play'){}syncUI()});
+socket.on('started',data=>{selfId=data.me.id;mode='play';taskItems=TASKS.map((t,id)=>({...t,id}));me={...data.me,x:470,y:380,room:'outside',alive:true,done:[]};taskDone=[];blackoutUntil=0;ventCD=0;sabotageCD=0;repairCompleted=0;repairNeeded=1;repairAlreadyDone=false;repairGame=null;ventTravelMap.clear();total=data.total;progress=0;$('chat').innerHTML='';close();toast(me.mafia?'😈 네가 마피아야! 시민을 습격해!':'🐰 네가 시민이야! 미션을 완료해!');chat('시스템','게임 시작! 건물 문과 미션에 가까이 다가가 E를 눌러봐.')});
+socket.on('view',data=>{if(!selfId||mode==='end')return;const priorRoom=me?.room;me={...data.me,name:lobbyData?.players.find(p=>p.id===selfId)?.name||'나',icon:lobbyData?.players.find(p=>p.id===selfId)?.icon||0};me.ghost=!me.alive;players=data.people.map(p=>({...p,alive:p.id===selfId?me.alive:true}));const i=players.findIndex(p=>p.id===selfId);if(i>=0)players[i]=me;else players.push(me);bodies=data.bodies;progress=data.completed;total=data.total;killCD=data.me.killCD||0;ventCD=data.me.ventCD||0;sabotageCD=data.me.sabotageCD||0;blackoutUntil=data.blackoutUntil||0;repairCompleted=data.repairCompleted||0;repairNeeded=data.repairRequired||1;repairAlreadyDone=!!data.repairAlreadyDone;taskDone=data.me.done||[];roster=data.roster;const s=data.seconds;$('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');if(priorRoom!==me.room)keys={};if(mode==='play'&&data.phase==='meeting')mode='meeting';const disabled=!me.alive;$('message').disabled=disabled;$('chatForm').querySelector('button').disabled=disabled;$('message').placeholder=disabled?'👻 사망자는 채팅을 보낼 수 없어요':'Enter로 채팅하기';if(mode==='play'&&data.phase==='play'){}syncUI()});
 socket.on('mini',mini);socket.on('miniWrong',()=>toast('다른 그림을 눌러봐!'));socket.on('miniNext',({pos})=>{if(miniState){miniState.pos=pos;renderMini()}});socket.on('miniDone',({fake})=>{mode='play';miniState=null;close();toast(fake?'😈 가짜 미션 완료!':'✨ 미션 완료!')});socket.on('killed',()=>toast('💤 당했어! 유령 상태로 미션을 이어갈 수 있어.'));
-socket.on('sabotageNotice',data=>{blackoutUntil=data.until||0;toast(data.message);chat('시스템',data.message)});
+socket.on('sabotageNotice',data=>{
+ blackoutUntil=data.until||0;
+ if(data.type==='blackout'){repairCompleted=0;repairAlreadyDone=false;repairGame=null}
+ if(!blackoutUntil&&mode==='repair'){repairGame=null;mode='play';close()}
+ toast(data.message);chat('시스템',data.message)
+});
+socket.on('repairProgress',data=>{
+ repairCompleted=data.completed;repairNeeded=data.required;
+ if(mode==='repair'&&repairGame&&$('modal')){const p=$('modal').querySelector('.repair-panel p b');if(p)p.textContent='⚡ 전체 복구: '+repairCompleted+' / '+repairNeeded+'명'}
+});
+socket.on('repairMini',showRepairMini);
+socket.on('repairWrong',()=>{if(!repairGame)return;repairGame.pos=0;drawRepairMini();toast('⚠️ 순서가 달라! 처음부터 다시 눌러줘')});
+socket.on('repairNext',data=>{if(!repairGame)return;repairGame.pos=data.pos;drawRepairMini()});
+socket.on('repairDone',()=>{repairAlreadyDone=true;repairGame=null;if(mode==='repair'){mode='play';close()}toast('✅ 내가 배선 복구에 성공했어!')});
+socket.on('ventTravel',data=>{
+ ventTravelMap.set(data.id,data);
+ if(data.id===selfId){keys={};toast('🕳️ 벤트 뚜껑을 열고 이동 중!')}
+});
+socket.on('ventArrive',data=>{if(data.id===selfId)keys={}});
+
 socket.on('meeting',meetingUI);
 socket.on('quickVoteCount',data=>{quickCount=data.count;quickTotal=data.total;if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'});
 socket.on('meetingPhase',data=>{voteStarts=data.voteStarts;meetingEnds=data.ends;toast('⚡ 모두 동의! 지금부터 투표 시작!')});
@@ -279,6 +363,6 @@ socket.on('voteResult',data=>{mode='pause';show(`<h2>🗳️ 회의 결과</h2><
 $('action').onclick=interact;$('attack').onclick=()=>socket.emit('kill');$('report').onclick=()=>socket.emit('report');$('emergency').onclick=()=>socket.emit('emergency');$('sabotage').onclick=()=>socket.emit('sabotage');$('vent').onclick=()=>socket.emit('vent');$('repair').onclick=()=>socket.emit('repair');$('chatForm').onsubmit=e=>{e.preventDefault();sendChat($('message'))};
 window.addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(document.activeElement?.tagName==='INPUT'){if(k==='Escape')document.activeElement.blur();return}if(k.startsWith('Arrow'))e.preventDefault();keys[k]=true;if(e.repeat)return;if(k==='e')interact();if(k==='f')socket.emit('kill');if(k==='r')socket.emit('report');if(k==='v'&&mode==='play')socket.emit('vent');if(k==='Enter'&&mode==='play')$('message').focus()});window.addEventListener('keyup',e=>keys[e.key.length===1?e.key.toLowerCase():e.key]=false);window.addEventListener('blur',()=>keys={});
 setInterval(()=>{const moving=mode==='play'||mode==='mini';const x=moving?Number(!!(keys.d||keys.ArrowRight))-Number(!!(keys.a||keys.ArrowLeft)):0,y=moving?Number(!!(keys.s||keys.ArrowDown))-Number(!!(keys.w||keys.ArrowUp)):0;if(roomCode&&selfId)socket.emit('move',{x,y})},50);
-function frame(ts){let dt=Math.min(.05,(ts-(frame.last||ts))/1000);frame.last=ts;if(notice>0){notice-=dt;if(notice<=0)$('toast').classList.add('hidden')}if(mode==='meeting'&&$('countdown')){const now=Date.now(),isDiscussion=now<voteStarts;$('countdown').textContent=(isDiscussion?'토론 ':'투표 ')+(()=>{const sec=Math.max(0,Math.ceil(((isDiscussion?voteStarts:meetingEnds)-now)/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')})();refreshVoteButtons();if($('voteHint'))$('voteHint').textContent=isDiscussion?'토론 종료 후 투표가 열려요.':myVotedId!==null?'✅ 투표 완료! 다른 사람들의 투표를 확인해 봐.':'지금 투표할 수 있어요!';if($('quickArea'))$('quickArea').style.display=isDiscussion?'':'none';if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'}R(0,0,CW,CH,'#203a31');if(me)stage();requestAnimationFrame(frame)}requestAnimationFrame(frame);
+function frame(ts){let dt=Math.min(.05,(ts-(frame.last||ts))/1000);frame.last=ts;if(notice>0){notice-=dt;if(notice<=0)$('toast').classList.add('hidden')}if(mode==='play'&&me){const vt=ventTravelMap.get(selfId);$('ventTransitBanner').style.display=vt&&Date.now()-vt.startedAt<1200?'':'none'}else $('ventTransitBanner').style.display='none';if(mode==='meeting'&&$('countdown')){const now=Date.now(),isDiscussion=now<voteStarts;$('countdown').textContent=(isDiscussion?'토론 ':'투표 ')+(()=>{const sec=Math.max(0,Math.ceil(((isDiscussion?voteStarts:meetingEnds)-now)/1000));return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0')})();refreshVoteButtons();if($('voteHint'))$('voteHint').textContent=isDiscussion?'토론 종료 후 투표가 열려요.':myVotedId!==null?'✅ 투표 완료! 다른 사람들의 투표를 확인해 봐.':'지금 투표할 수 있어요!';if($('quickArea'))$('quickArea').style.display=isDiscussion?'':'none';if($('quickCount'))$('quickCount').textContent=quickCount+' / '+quickTotal+'명 동의'}R(0,0,CW,CH,'#203a31');if(me)stage();requestAnimationFrame(frame)}requestAnimationFrame(frame);
 })();
 </script></body></html>
