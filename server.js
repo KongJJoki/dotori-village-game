@@ -22,7 +22,7 @@ const VENTS=[{room:'outside',x:470,y:480},{room:'bakery',x:205,y:155},{room:'sto
 const MAX_PLAYERS=12,MIN_PLAYERS=3,AVATAR_COUNT=8;
 function spawn(index,count){const angle=2*Math.PI*index/count;return {x:475+Math.cos(angle)*54,y:385+Math.sin(angle)*54}};
 function mafiaCount(count){return count>=11?3:count>=7?2:1}
-const clamp=(v,l,h)=>Math.min(h,Math.max(l,v));const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);const shuffled=a=>[...a].sort(()=>Math.random()-.5);
+const clamp=(v,l,h)=>Math.min(h,Math.max(l,v));const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);const shuffled=a=>{const result=[...a];for(let i=result.length-1;i>0;i--){const j=crypto.randomInt(i+1);[result[i],result[j]]=[result[j],result[i]]}return result};
 function collides(x,y){return x<15||x>985||y<15||y>715||BUILDINGS.some(b=>x>b.x-15&&x<b.x+b.w+15&&y>b.y-15&&y<b.y+b.h+15)}
 function safeExit(b){let base={x:b.doorX,y:b.y+b.h+44};for(let n=0;n<90;n++){let x=base.x+Math.cos(n*2.4)*Math.ceil(n/7)*12,y=base.y+Math.sin(n*2.4)*Math.ceil(n/7)*12;if(!collides(x,y))return {x,y}}return {x:470,y:410}}
 function normalizedName(name){return String(name).normalize('NFKC').trim().toLocaleLowerCase('ko-KR')}
@@ -47,7 +47,19 @@ function prepareRematch(room){
  io.to(room.code).emit('rematchReady');
  lobby(room);
 }
-function start(room){if(room.phase!=='lobby'||room.players.size<MIN_PLAYERS||room.players.size>MAX_PLAYERS||[...room.players.values()].some(p=>!p.ready))return;room.phase='play';room.completed=0;room.total=(room.players.size-mafiaCount(room.players.size))*4;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=Date.now()+20000;room.repairRound=0;room.repairers=new Set();room.startedAt=Date.now();const arr=shuffled([...room.players.values()]);arr.forEach((p,i)=>{const position=spawn(i,arr.length);p.x=position.x;p.y=position.y;p.room='outside';p.alive=true;p.knownDead=false;p.mafia=i<mafiaCount(arr.length);p.jobs=shuffled(TASKS.map((_,i)=>i)).slice(0,4);p.done=[];p.nextKill=Date.now()+12000;p.nextVent=0;p.ventingUntil=0;p.repairMini=null;p.meetingUsed=false;p.intent={x:0,y:0};p.lastMove=Date.now();p.mini=null;p.ready=false});for(const p of room.players.values())io.to(p.id).emit('started',{me:{id:p.id,mafia:p.mafia,jobs:p.jobs},total:room.total});lobby(room)}
+function selectMafia(room,players){
+ const count=mafiaCount(players.length),previous=new Set(room.previousMafia||[]);
+ const roster=shuffled(players),selected=[];
+ // 지난 판과 똑같은 마피아 조합이 연속되지 않도록, 한 자리만 다시 추첨한다.
+ for(const p of roster.slice(0,count))selected.push(p);
+ if(previous.size===count&&selected.every(p=>previous.has(p))){
+  const replacement=roster.slice(count)[crypto.randomInt(roster.length-count)];
+  selected[crypto.randomInt(count)]=replacement;
+ }
+ room.previousMafia=selected.map(p=>p.id);
+ return new Set(room.previousMafia);
+}
+function start(room){if(room.phase!=='lobby'||room.players.size<MIN_PLAYERS||room.players.size>MAX_PLAYERS||[...room.players.values()].some(p=>!p.ready))return;room.phase='play';room.completed=0;room.total=(room.players.size-mafiaCount(room.players.size))*4;room.bodies=[];room.meeting=null;room.blackoutUntil=0;room.nextSabotage=Date.now()+20000;room.repairRound=0;room.repairers=new Set();room.startedAt=Date.now();const arr=shuffled([...room.players.values()]);const chosenMafia=selectMafia(room,arr);arr.forEach((p,i)=>{const position=spawn(i,arr.length);p.x=position.x;p.y=position.y;p.room='outside';p.alive=true;p.knownDead=false;p.mafia=chosenMafia.has(p.id);p.jobs=shuffled(TASKS.map((_,i)=>i)).slice(0,4);p.done=[];p.nextKill=Date.now()+12000;p.nextVent=0;p.ventingUntil=0;p.repairMini=null;p.meetingUsed=false;p.intent={x:0,y:0};p.lastMove=Date.now();p.mini=null;p.ready=false});for(const p of room.players.values())io.to(p.id).emit('started',{me:{id:p.id,mafia:p.mafia,jobs:p.jobs},total:room.total});lobby(room)}
 function voteStatus(room){
  if(room.phase!=='meeting'||!room.meeting)return;
  const alive=[...room.players.values()].filter(p=>p.alive);
